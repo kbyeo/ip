@@ -46,6 +46,8 @@ public class StackOverflown {
             throw new EmptyDescriptionException("deadline");
         } else if (input.equals("event")) {
             throw new EmptyDescriptionException("event");
+        } else if (input.startsWith("delete ")) {
+            handleDeleteCommand(currentTasks, input, lineSeparation);
         } else {
             throw new InvalidCommandException(input);
         }
@@ -104,6 +106,15 @@ public class StackOverflown {
         String addedMessage = String.format("%s\nTada! An Event task just joined the party: %s\nYour task arsenal now stands at %s strong!\n%s",
                 lineSeparation, currentTasks.getTask(taskNumber - 1), taskNumber, lineSeparation);
         System.out.println(addedMessage);
+    }
+
+    private static void handleDeleteCommand(TaskList currentTasks, String input, String lineSeparation) throws InvalidTaskNumberException {
+        try {
+            int taskIndex = Integer.parseInt(input.substring(7)) - 1;
+            currentTasks.deleteTask(taskIndex);
+        } catch (NumberFormatException e) {
+            throw new InvalidTaskNumberException();
+        }
     }
 
 

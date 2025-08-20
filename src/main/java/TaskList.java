@@ -1,13 +1,15 @@
+import java.util.ArrayList;
+
 public class TaskList {
     //list of tasks are stored as an array of Tasks
-    private Task[] tasks;
+    private ArrayList<Task> tasks;
     private int taskCount;
     private static final int MAX_TASKS = 100;
     //line separation variable here to minimise duplication of code
     private String lineSeparation = "____________________________________________________________";
 
     public TaskList() {
-        this.tasks = new Task[MAX_TASKS];
+        this.tasks = new ArrayList<>();
         taskCount = 0;
     }
 
@@ -19,7 +21,7 @@ public class TaskList {
             throw new EmptyDescriptionException("todo");
         }
         ToDo newTask = new ToDo(description);
-        this.tasks[taskCount] = newTask;
+        this.tasks.add(newTask);
         this.taskCount++;
     }
 
@@ -31,7 +33,7 @@ public class TaskList {
             throw new EmptyDescriptionException("deadline date");
         }
         Deadline newTask = new Deadline(description, byDate);
-        this.tasks[taskCount] = newTask;
+        this.tasks.add(newTask);
         this.taskCount++;
     }
 
@@ -46,8 +48,19 @@ public class TaskList {
             throw new EmptyDescriptionException("event end time");
         }
         Event newTask = new Event(description, from, to);
-        this.tasks[taskCount] = newTask;
+        this.tasks.add(newTask);
         this.taskCount++;
+    }
+
+    public void deleteTask(int index) throws InvalidTaskNumberException {
+        if (index < 0 || index >= tasks.size()) {
+            throw new InvalidTaskNumberException();
+        }
+        Task removedTask = tasks.remove(index);
+        this.taskCount--;
+        String deleteMessage = String.format("%s\n Poof! Task vanished from existence:\n   %s\n Your task arsenal now stands at %d strong!\n%s",
+                lineSeparation, removedTask, tasks.size(), lineSeparation);
+        System.out.println(deleteMessage);
     }
 
     //get the task count
@@ -57,7 +70,7 @@ public class TaskList {
 
     //get the task at index
     public Task getTask(int index) {
-        return this.tasks[index];
+        return this.tasks.get(index);
     }
 
     public boolean isEmpty() {
@@ -68,9 +81,9 @@ public class TaskList {
         if (index < 0 || index >= taskCount) {
             throw new InvalidTaskNumberException();
         }
-        this.tasks[index].markDone();
+        tasks.get(index).markDone();
         String markMessage = String.format("%s\n Boom! That task is history - marked as done and dusted\n%s\n%s",
-                lineSeparation, this.tasks[index], lineSeparation);
+                lineSeparation, this.tasks.get(index), lineSeparation);
         System.out.println(markMessage);
     }
 
@@ -78,9 +91,9 @@ public class TaskList {
         if (index < 0 || index >= taskCount) {
             throw new InvalidTaskNumberException();
         }
-        this.tasks[index].unmarkDone();
+        this.tasks.get(index).unmarkDone();
         String unmarkMessage = String.format("%s\n Aha! This task is no longer done - it's waiting for your magic" +
-                        " touch again\n%s\n%s", lineSeparation, this.tasks[index], lineSeparation);
+                        " touch again\n%s\n%s", lineSeparation, this.tasks.get(index), lineSeparation);
         System.out.println(unmarkMessage);
     }
 
@@ -89,7 +102,7 @@ public class TaskList {
     public String toString() {
         String result = "buckle up! Here comes your grand, magnificent, absolutely dazzling list of tasks:\n";
         for (int i = 0; i < taskCount; i++) {
-            String temp = String.format("%s. %s\n", i + 1, this.tasks[i]);
+            String temp = String.format("%s. %s\n", i + 1, this.tasks.get(i));
             result = result + temp;
         }
         return result.trim();
