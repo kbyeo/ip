@@ -14,19 +14,37 @@ public class TaskList {
 
 
     //methods to add various tasks types to the list
-    public void addToDo(String description) {
+    public void addToDo(String description) throws EmptyDescriptionException {
+        if (description.trim().isEmpty()) {
+            throw new EmptyDescriptionException("todo");
+        }
         ToDo newTask = new ToDo(description);
         this.tasks[taskCount] = newTask;
         this.taskCount++;
     }
 
-    public void addDeadline(String description, String byDate) {
+    public void addDeadline(String description, String byDate) throws EmptyDescriptionException {
+        if (description.trim().isEmpty()) {
+            throw new EmptyDescriptionException("deadline");
+        }
+        if (byDate.trim().isEmpty()) {
+            throw new EmptyDescriptionException("deadline date");
+        }
         Deadline newTask = new Deadline(description, byDate);
         this.tasks[taskCount] = newTask;
         this.taskCount++;
     }
 
-    public void addEvent(String description, String from, String to) {
+    public void addEvent(String description, String from, String to) throws EmptyDescriptionException {
+        if (description.trim().isEmpty()) {
+            throw new EmptyDescriptionException("event");
+        }
+        if (from.trim().isEmpty()) {
+            throw new EmptyDescriptionException("event start time");
+        }
+        if (to.trim().isEmpty()) {
+            throw new EmptyDescriptionException("event end time");
+        }
         Event newTask = new Event(description, from, to);
         this.tasks[taskCount] = newTask;
         this.taskCount++;
@@ -46,14 +64,20 @@ public class TaskList {
         return taskCount == 0;
     }
 
-    public void markTask(int index) {
+    public void markTask(int index) throws InvalidTaskNumberException {
+        if (index < 0 || index >= taskCount) {
+            throw new InvalidTaskNumberException();
+        }
         this.tasks[index].markDone();
         String markMessage = String.format("%s\n Boom! That task is history - marked as done and dusted\n%s\n%s",
                 lineSeparation, this.tasks[index], lineSeparation);
         System.out.println(markMessage);
     }
 
-    public void unmarkTask(int index) {
+    public void unmarkTask(int index) throws InvalidTaskNumberException {
+        if (index < 0 || index >= taskCount) {
+            throw new InvalidTaskNumberException();
+        }
         this.tasks[index].unmarkDone();
         String unmarkMessage = String.format("%s\n Aha! This task is no longer done - it's waiting for your magic" +
                         " touch again\n%s\n%s", lineSeparation, this.tasks[index], lineSeparation);
