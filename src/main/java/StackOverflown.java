@@ -22,6 +22,20 @@ public class StackOverflown {
             if (userInput.equals("list")) {
                 String listDisplay = String.format("%s\n%s\n%s", lineSeparation, currentTasks, lineSeparation);
                 System.out.println(listDisplay);
+            } else if (userInput.startsWith("mark ")) {
+                try {
+                    int taskIndex = Integer.parseInt(userInput.substring(5)) - 1;
+                    currentTasks.markTask(taskIndex);
+                } catch (Exception e) {
+                    System.out.println("Uh-oh! That task number doesn’t exist in my universe — try again?");
+                }
+            } else if (userInput.startsWith("unmark ")) {
+                try {
+                    int taskIndex = Integer.parseInt(userInput.substring(7)) - 1;
+                    currentTasks.unmarkTask(taskIndex);
+                } catch (Exception e) {
+                    System.out.println("Uh-oh! That task number doesn’t exist in my universe — try again?");
+                }
             } else {
                 currentTasks.addTask(userInput);
                 String addedMessage = String.format("%s\n added: %s\n%s", lineSeparation, userInput, lineSeparation);
