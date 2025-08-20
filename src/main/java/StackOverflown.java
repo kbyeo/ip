@@ -24,7 +24,8 @@ public class StackOverflown {
                 System.out.println(listDisplay);
             } else {
                 currentTasks.addTask(userInput);
-                System.out.println("added: " + userInput);
+                String addedMessage = String.format("%s\n added: %s\n%s", lineSeparation, userInput, lineSeparation);
+                System.out.println(addedMessage);
             }
             userInput = scanner.nextLine();
         }

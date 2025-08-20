@@ -39,7 +39,7 @@ public class TaskList {
             String temp = String.format("%s. %s\n", i + 1, this.tasks[i]);
             result = result + temp;
         }
-        return result;
+        return result.trim();
     }
 
 }
