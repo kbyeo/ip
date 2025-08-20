@@ -11,14 +11,21 @@ public class StackOverflown {
                 "for you? :)", botName);
         String decoratedIntro = String.format("%s\n %s\n%s", lineSeparation, introLine, lineSeparation);
 
+        TaskList currentTasks = new TaskList();
+
         System.out.println(decoratedIntro);
 
         Scanner scanner = new Scanner(System.in);
         String userInput = scanner.nextLine();
 
         while (!userInput.equals("bye")) {
-            String decoratedEcho = String.format("%s\n %s\n%s", lineSeparation, userInput, lineSeparation);
-            System.out.println(decoratedEcho);
+            if (userInput.equals("list")) {
+                String listDisplay = String.format("%s\n%s\n%s", lineSeparation, currentTasks, lineSeparation);
+                System.out.println(listDisplay);
+            } else {
+                currentTasks.addTask(userInput);
+                System.out.println("added: " + userInput);
+            }
             userInput = scanner.nextLine();
         }
 
@@ -28,3 +35,6 @@ public class StackOverflown {
 
     }
 }
+
+
+
