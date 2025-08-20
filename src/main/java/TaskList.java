@@ -48,14 +48,14 @@ public class TaskList {
 
     public void markTask(int index) {
         this.tasks[index].markDone();
-        String markMessage = String.format("%s\n Boom! That task is history — marked as done and dusted\n%s\n%s",
+        String markMessage = String.format("%s\n Boom! That task is history - marked as done and dusted\n%s\n%s",
                 lineSeparation, this.tasks[index], lineSeparation);
         System.out.println(markMessage);
     }
 
     public void unmarkTask(int index) {
         this.tasks[index].unmarkDone();
-        String unmarkMessage = String.format("%s\n Aha! This task is no longer done — it’s waiting for your magic" +
+        String unmarkMessage = String.format("%s\n Aha! This task is no longer done - it's waiting for your magic" +
                         " touch again\n%s\n%s", lineSeparation, this.tasks[index], lineSeparation);
         System.out.println(unmarkMessage);
     }

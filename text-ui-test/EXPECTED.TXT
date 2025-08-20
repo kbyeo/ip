@@ -1,7 +1,115 @@
-Hello from
- ____        _        
-|  _ \ _   _| | _____ 
-| | | | | | | |/ / _ \
-| |_| | |_| |   <  __/
-|____/ \__,_|_|\_\___|
-
+____________________________________________________________
+ Hey! StackOverflown here, thrilled to see you!
+ Let's dive RIGHT in, what can I do for you? :)
+____________________________________________________________
+____________________________________________________________
+buckle up! Here comes your grand, magnificent, absolutely dazzling list of tasks:
+____________________________________________________________
+____________________________________________________________
+Boom! A ToDo task just joined the party: [T][]attend seminar
+Your task arsenal now stands at 1 strong!
+____________________________________________________________
+____________________________________________________________
+Boom! A ToDo task just joined the party: [T][]read book
+Your task arsenal now stands at 2 strong!
+____________________________________________________________
+____________________________________________________________
+All set! A Deadline task just joined the party: [D][]return book (by: Sunday)
+Your task arsenal now stands at 3 strong!
+____________________________________________________________
+____________________________________________________________
+Tada! An Event task just joined the party: [E][]project meeting (from: Mon 2pm to: 4pm)
+Your task arsenal now stands at 4 strong!
+____________________________________________________________
+____________________________________________________________
+buckle up! Here comes your grand, magnificent, absolutely dazzling list of tasks:
+1. [T][]attend seminar
+2. [T][]read book
+3. [D][]return book (by: Sunday)
+4. [E][]project meeting (from: Mon 2pm to: 4pm)
+____________________________________________________________
+____________________________________________________________
+ Boom! That task is history - marked as done and dusted
+[T][X]attend seminar
+____________________________________________________________
+____________________________________________________________
+ Boom! That task is history - marked as done and dusted
+[T][X]read book
+____________________________________________________________
+____________________________________________________________
+ Boom! That task is history - marked as done and dusted
+[D][X]return book (by: Sunday)
+____________________________________________________________
+____________________________________________________________
+ Boom! That task is history - marked as done and dusted
+[E][X]project meeting (from: Mon 2pm to: 4pm)
+____________________________________________________________
+____________________________________________________________
+buckle up! Here comes your grand, magnificent, absolutely dazzling list of tasks:
+1. [T][X]attend seminar
+2. [T][X]read book
+3. [D][X]return book (by: Sunday)
+4. [E][X]project meeting (from: Mon 2pm to: 4pm)
+____________________________________________________________
+____________________________________________________________
+ Aha! This task is no longer done - it's waiting for your magic touch again
+[T][]attend seminar
+____________________________________________________________
+____________________________________________________________
+ Aha! This task is no longer done - it's waiting for your magic touch again
+[T][]read book
+____________________________________________________________
+____________________________________________________________
+ Aha! This task is no longer done - it's waiting for your magic touch again
+[D][]return book (by: Sunday)
+____________________________________________________________
+____________________________________________________________
+ Aha! This task is no longer done - it's waiting for your magic touch again
+[E][]project meeting (from: Mon 2pm to: 4pm)
+____________________________________________________________
+____________________________________________________________
+buckle up! Here comes your grand, magnificent, absolutely dazzling list of tasks:
+1. [T][]attend seminar
+2. [T][]read book
+3. [D][]return book (by: Sunday)
+4. [E][]project meeting (from: Mon 2pm to: 4pm)
+____________________________________________________________
+____________________________________________________________
+Uh-oh! That task number doesn't exist in my universe - try again?
+____________________________________________________________
+____________________________________________________________
+Uh-oh! That task number doesn't exist in my universe - try again?
+____________________________________________________________
+____________________________________________________________
+Uh-oh! That task number doesn't exist in my universe - try again?
+____________________________________________________________
+____________________________________________________________
+Uh-oh! That task number doesn't exist in my universe - try again?
+____________________________________________________________
+____________________________________________________________
+Boom! A ToDo task just joined the party: [T][]deadline
+Your task arsenal now stands at 5 strong!
+____________________________________________________________
+____________________________________________________________
+Invalid deadline format! Use: deadline <DESCRIPTION> /by <TIME>
+____________________________________________________________
+____________________________________________________________
+Invalid deadline format! Use: deadline <DESCRIPTION> /by <TIME>
+____________________________________________________________
+____________________________________________________________
+Boom! A ToDo task just joined the party: [T][]event
+Your task arsenal now stands at 6 strong!
+____________________________________________________________
+____________________________________________________________
+Invalid event format! Use: event <DESCRIPTION> /from <START> /to <END>
+____________________________________________________________
+____________________________________________________________
+Invalid event format! Use: event <DESCRIPTION> /from <START> /to <END>
+____________________________________________________________
+____________________________________________________________
+Invalid event format! Use: event <DESCRIPTION> /from <START> /to <END>
+____________________________________________________________
+____________________________________________________________
+ Aww, you're leaving already? It's been such a
+ pleasure, can't wait till next time! :)
+____________________________________________________________

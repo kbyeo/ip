@@ -5,7 +5,7 @@ public class StackOverflown {
     public static void main(String[] args) {
         String lineSeparation = "____________________________________________________________";
         String botName = "StackOverflown";
-        String exitLine = "Aww, you’re leaving already? It’s been such a \n pleasure, can’t wait till next time! :)";
+        String exitLine = "Aww, you're leaving already? It's been such a\n pleasure, can't wait till next time! :)";
         String decoratedExit = String.format("%s\n %s\n%s", lineSeparation, exitLine, lineSeparation);
         String introLine = String.format("Hey! %s here, thrilled to see you!\n Let's dive RIGHT in, what can I do " +
                 "for you? :)", botName);
@@ -27,14 +27,16 @@ public class StackOverflown {
                     int taskIndex = Integer.parseInt(userInput.substring(5)) - 1;
                     currentTasks.markTask(taskIndex);
                 } catch (Exception e) {
-                    System.out.println("Uh-oh! That task number doesn’t exist in my universe — try again?");
+                    System.out.println(lineSeparation + "\nUh-oh! That task number doesn't exist " +
+                            "in my universe - try again?\n" + lineSeparation);
                 }
             } else if (userInput.startsWith("unmark ")) {
                 try {
                     int taskIndex = Integer.parseInt(userInput.substring(7)) - 1;
                     currentTasks.unmarkTask(taskIndex);
                 } catch (Exception e) {
-                    System.out.println("Uh-oh! That task number doesn’t exist in my universe — try again?");
+                    System.out.println(lineSeparation + "\nUh-oh! That task number doesn't exist " +
+                            "in my universe - try again?\n" + lineSeparation);
                 }
             } else if (userInput.startsWith("todo ")) {
                 String description = userInput.substring(5);
@@ -42,7 +44,7 @@ public class StackOverflown {
                 int taskNumber = currentTasks.getTaskCount();
                 String addedMessage = String.format("%s\nBoom! A ToDo task just joined the party:" +
                                 " %s\nYour task arsenal now stands at %s strong!\n%s",
-                        lineSeparation, currentTasks.getTask(taskNumber), taskNumber + 1, lineSeparation);
+                        lineSeparation, currentTasks.getTask(taskNumber - 1), taskNumber, lineSeparation);
                 System.out.println(addedMessage);
             } else if (userInput.startsWith("deadline ")) {
                 String content = userInput.substring(9); // Remove "deadline "
@@ -55,7 +57,8 @@ public class StackOverflown {
                             lineSeparation, currentTasks.getTask(taskNumber - 1), taskNumber, lineSeparation);
                     System.out.println(addedMessage);
                 } else {
-                    System.out.println("Invalid deadline format! Use: deadline <DESCRIPTION> /by <TIME>");
+                    System.out.println(lineSeparation + "\nInvalid deadline format! Use: deadline" +
+                            " <DESCRIPTION> /by <TIME>\n" + lineSeparation);
                 }
             } else if (userInput.startsWith("event ")) {
                 String content = userInput.substring(6);
@@ -70,8 +73,12 @@ public class StackOverflown {
                                 lineSeparation, currentTasks.getTask(taskNumber - 1), taskNumber, lineSeparation);
                         System.out.println(addedMessage);
                     } else {
-                        System.out.println("Invalid event format! Use: event <DESCRIPTION> /from <START> /to <END>");
+                        System.out.println(lineSeparation + "\nInvalid event format! Use: event <DESCRIPTION> " +
+                                "/from <START> /to <END>\n" + lineSeparation);
                     }
+                } else {
+                    System.out.println(lineSeparation + "\nInvalid event format! Use: event <DESCRIPTION> " +
+                            "/from <START> /to <END>\n" + lineSeparation);
                 }
             } else {
                 //treat as "todo" by default
