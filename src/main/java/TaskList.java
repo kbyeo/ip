@@ -11,12 +11,25 @@ public class TaskList {
         taskCount = 0;
     }
 
-    public void addTask(String description) {
-        //create a new Task first
-        Task newTask = new Task(description);
-        //add it to the list of current tasks and increment task count
-        tasks[taskCount] = newTask;
-        taskCount++;
+
+
+    //methods to add various tasks types to the list
+    public void addToDo(String description) {
+        ToDo newTask = new ToDo(description);
+        this.tasks[taskCount] = newTask;
+        this.taskCount++;
+    }
+
+    public void addDeadline(String description, String byDate) {
+        Deadline newTask = new Deadline(description, byDate);
+        this.tasks[taskCount] = newTask;
+        this.taskCount++;
+    }
+
+    public void addEvent(String description, String from, String to) {
+        Event newTask = new Event(description, from, to);
+        this.tasks[taskCount] = newTask;
+        this.taskCount++;
     }
 
     //get the task count

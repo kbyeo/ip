@@ -1,4 +1,4 @@
-public class Task {
+public abstract class Task {
     //description of the task involved
     private String description;
     //boolean flag for status of task
@@ -27,12 +27,10 @@ public class Task {
 
     //returns appropriate string based on task status
     public String statusIcon() {
-        return this.isDone ? "X" : " ";
+        return this.isDone ? "[X]" : "[]";
     }
 
-    //override toString to simplify the handling of tasks in other classes
-    @Override
-    public String toString() {
-        return "[" + this.statusIcon() + "] " + this.description;
-    }
+    public abstract String getTypeIcon();
+
+
 }

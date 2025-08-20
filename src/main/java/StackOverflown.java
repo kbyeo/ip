@@ -36,9 +36,50 @@ public class StackOverflown {
                 } catch (Exception e) {
                     System.out.println("Uh-oh! That task number doesn’t exist in my universe — try again?");
                 }
+            } else if (userInput.startsWith("todo ")) {
+                String description = userInput.substring(5);
+                currentTasks.addToDo(description);
+                int taskNumber = currentTasks.getTaskCount();
+                String addedMessage = String.format("%s\nBoom! A ToDo task just joined the party:" +
+                                " %s\nYour task arsenal now stands at %s strong!\n%s",
+                        lineSeparation, currentTasks.getTask(taskNumber), taskNumber + 1, lineSeparation);
+                System.out.println(addedMessage);
+            } else if (userInput.startsWith("deadline ")) {
+                String content = userInput.substring(9); // Remove "deadline "
+                String[] parts = content.split(" /by ");
+                if (parts.length == 2) {
+                    currentTasks.addDeadline(parts[0], parts[1]);
+                    int taskNumber = currentTasks.getTaskCount();
+                    String addedMessage = String.format("%s\nAll set! A Deadline task just joined the party:" +
+                                    " %s\nYour task arsenal now stands at %s strong!\n%s",
+                            lineSeparation, currentTasks.getTask(taskNumber - 1), taskNumber, lineSeparation);
+                    System.out.println(addedMessage);
+                } else {
+                    System.out.println("Invalid deadline format! Use: deadline <DESCRIPTION> /by <TIME>");
+                }
+            } else if (userInput.startsWith("event ")) {
+                String content = userInput.substring(6);
+                String[] parts = content.split(" /from ");
+                if (parts.length == 2) {
+                    String[] timeParts = parts[1].split(" /to ");
+                    if (timeParts.length == 2) {
+                        currentTasks.addEvent(parts[0], timeParts[0], timeParts[1]);
+                        int taskNumber = currentTasks.getTaskCount();
+                        String addedMessage = String.format("%s\nTada! An Event task just joined the party:" +
+                                        " %s\nYour task arsenal now stands at %s strong!\n%s",
+                                lineSeparation, currentTasks.getTask(taskNumber - 1), taskNumber, lineSeparation);
+                        System.out.println(addedMessage);
+                    } else {
+                        System.out.println("Invalid event format! Use: event <DESCRIPTION> /from <START> /to <END>");
+                    }
+                }
             } else {
-                currentTasks.addTask(userInput);
-                String addedMessage = String.format("%s\n added: %s\n%s", lineSeparation, userInput, lineSeparation);
+                //treat as "todo" by default
+                currentTasks.addToDo(userInput);
+                int taskNumber = currentTasks.getTaskCount();
+                String addedMessage = String.format("%s\nBoom! A ToDo task just joined the party:" +
+                                " %s\nYour task arsenal now stands at %s strong!\n%s",
+                        lineSeparation, currentTasks.getTask(taskNumber - 1), taskNumber, lineSeparation);
                 System.out.println(addedMessage);
             }
             userInput = scanner.nextLine();
@@ -49,6 +90,8 @@ public class StackOverflown {
         scanner.close();
 
     }
+
+
 }
 
 
