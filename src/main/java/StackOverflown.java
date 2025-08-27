@@ -56,6 +56,7 @@ public class StackOverflown {
             throw new InvalidCommandException(input);
         }
     }
+
     private static void handleMarkCommand(TaskList currentTasks, String input, String lineSeparation) throws InvalidTaskNumberException {
         try {
             int taskIndex = Integer.parseInt(input.substring(5)) - 1;
@@ -64,6 +65,7 @@ public class StackOverflown {
             throw new InvalidTaskNumberException();
         }
     }
+
     private static void handleUnmarkCommand(TaskList currentTasks, String input, String lineSeparation) throws InvalidTaskNumberException {
         try {
             int taskIndex = Integer.parseInt(input.substring(7)) - 1;
@@ -72,6 +74,7 @@ public class StackOverflown {
             throw new InvalidTaskNumberException();
         }
     }
+
     private static void handleTodoCommand(TaskList currentTasks, String input, String lineSeparation) throws EmptyDescriptionException {
         String description = input.substring(5);
         currentTasks.addToDo(description);
@@ -80,20 +83,24 @@ public class StackOverflown {
                 lineSeparation, currentTasks.getTask(taskNumber - 1), taskNumber, lineSeparation);
         System.out.println(addedMessage);
     }
-    private static void handleDeadlineCommand(TaskList currentTasks, String input, String lineSeparation) throws InvalidFormatException, EmptyDescriptionException {
+
+    private static void handleDeadlineCommand(TaskList currentTasks, String input, String lineSeparation)
+            throws InvalidFormatException, EmptyDescriptionException, StackOverflownException {
         String content = input.substring(9);
         String[] parts = content.split(" /by ");
         if (parts.length != 2) {
-            throw new InvalidFormatException("deadline <DESCRIPTION> /by <TIME>");
+            throw new InvalidFormatException("deadline <DESCRIPTION> /by <DATE/TIME>");
         }
 
-        currentTasks.addDeadline(parts[0], parts[1]);
+        currentTasks.addDeadline(parts[0], parts[1]); // Can now throw date parsing exception
         int taskNumber = currentTasks.getTaskCount();
         String addedMessage = String.format("%s\nAll set! A Deadline task just joined the party: %s\nYour task arsenal now stands at %s strong!\n%s",
                 lineSeparation, currentTasks.getTask(taskNumber - 1), taskNumber, lineSeparation);
         System.out.println(addedMessage);
     }
-    private static void handleEventCommand(TaskList currentTasks, String input, String lineSeparation) throws InvalidFormatException, EmptyDescriptionException {
+
+    private static void handleEventCommand(TaskList currentTasks, String input, String lineSeparation)
+            throws InvalidFormatException, EmptyDescriptionException, StackOverflownException {
         String content = input.substring(6);
         String[] parts = content.split(" /from ");
         if (parts.length != 2) {
@@ -105,7 +112,7 @@ public class StackOverflown {
             throw new InvalidFormatException("event <DESCRIPTION> /from <START> /to <END>");
         }
 
-        currentTasks.addEvent(parts[0], timeParts[0], timeParts[1]);
+        currentTasks.addEvent(parts[0], timeParts[0], timeParts[1]); // Can now throw date parsing exception
         int taskNumber = currentTasks.getTaskCount();
         String addedMessage = String.format("%s\nTada! An Event task just joined the party: %s\nYour task arsenal now stands at %s strong!\n%s",
                 lineSeparation, currentTasks.getTask(taskNumber - 1), taskNumber, lineSeparation);
