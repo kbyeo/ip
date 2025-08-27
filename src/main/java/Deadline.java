@@ -8,7 +8,7 @@ public class Deadline extends Task {
     private static final DateTimeFormatter DATETIME_INPUT_FORMAT = DateTimeFormatter.ofPattern("yyyy-M-d HHmm");
     private static final DateTimeFormatter OUTPUT_FORMAT = DateTimeFormatter.ofPattern("MMM d yyyy h:mma");
 
-    public Deadline(String description, String byDate) {
+    public Deadline(String description, String byDateTime) throws StackOverflownException {
         super(description);
         this.byDateTime = parseDateTime(byDateTime);
     }
@@ -85,8 +85,7 @@ public class Deadline extends Task {
 
     @Override
     public String toString() {
-        String temp = String.format("%s%s%s (by: %s)", this.getTypeIcon(), this.statusIcon(),
-                this.getDescription(), this.byDate);
-        return temp;
+        return String.format("%s%s%s (by: %s)", this.getTypeIcon(), this.statusIcon(),
+                this.getDescription(), getBy());
     }
 }

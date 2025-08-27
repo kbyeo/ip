@@ -104,8 +104,7 @@ public class Event extends Task {
 
     @Override
     public String toString() {
-        String temp = String.format("%s%s%s (from: %s to: %s)", this.getTypeIcon(), this.statusIcon(),
-                this.getDescription(), this.from, this.to);
-        return temp;
+        return String.format("%s%s%s (from: %s to: %s)", this.getTypeIcon(), this.statusIcon(),
+                this.getDescription(), getFrom(), getTo());
     }
 }
