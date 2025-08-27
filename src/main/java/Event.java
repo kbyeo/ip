@@ -8,6 +8,23 @@ public class Event extends Task {
         this.to = to;
     }
 
+    /**
+     * Gets the event start time.
+     *
+     * @return the start time as a String
+     */
+    public String getFrom() {
+        return this.from;
+    }
+    /**
+     * Gets the event end time.
+     *
+     * @return the end time as a String
+     */
+    public String getTo() {
+        return this.to;
+    }
+
     @Override
     public String getTypeIcon() {
         return "[E]";

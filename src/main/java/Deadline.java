@@ -6,6 +6,15 @@ public class Deadline extends Task {
         this.byDate = byDate;
     }
 
+    /**
+     * Gets the deadline date/time.
+     *
+     * @return the deadline date/time as a String
+     */
+    public String getBy() {
+        return this.byDate;
+    }
+
     @Override
     public String getTypeIcon() {
         return "[D]";
