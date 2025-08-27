@@ -9,10 +9,14 @@ public class StackOverflown {
         String decoratedExit = String.format("%s\n %s\n%s", lineSeparation, exitLine, lineSeparation);
         String introLine = String.format("Hey! %s here, thrilled to see you!\n Let's dive RIGHT in, what can I do for you? :)", botName);
         String decoratedIntro = String.format("%s\n %s\n%s", lineSeparation, introLine, lineSeparation);
-        TaskList currentTasks = new TaskList();
+
+        Storage storage = new Storage();
+        TaskList currentTasks = new TaskList(storage);
+
         System.out.println(decoratedIntro);
         Scanner scanner = new Scanner(System.in);
         String userInput = scanner.nextLine();
+
         while (!userInput.equals("bye")) {
             try {
                 handleCommand(currentTasks, userInput, lineSeparation);

@@ -38,6 +38,7 @@ public class Storage {
                 Task task = parseTaskFromLine(line);
                 tasks.add(task);
             }
+            System.out.println("Tasks loaded");
 
         } catch (IOException e) {
             throw new StackOverflownException("Oops! Had trouble reading your saved tasks: " + e.getMessage());
@@ -60,6 +61,7 @@ public class Storage {
             for (Task task : tasks) {
                 writer.write(formatTaskForFile(task) + System.lineSeparator());
             }
+            System.out.println("task written");
             writer.close();
 
         } catch (IOException e) {
@@ -86,23 +88,23 @@ public class Storage {
 
         Task task;
         switch (taskType) {
-            case "T":
-                task = new ToDo(description);
-                break;
-            case "D":
-                if (parts.length < 4) {
-                    throw new StackOverflownException("Corrupted deadline data in save file");
-                }
-                task = new Deadline(description, parts[3]);
-                break;
-            case "E":
-                if (parts.length < 5) {
-                    throw new StackOverflownException("Corrupted event data in save file");
-                }
-                task = new Event(description, parts[3], parts[4]);
-                break;
-            default:
-                throw new StackOverflownException("Unknown task type in save file: " + taskType);
+        case "T":
+            task = new ToDo(description);
+            break;
+        case "D":
+            if (parts.length < 4) {
+                throw new StackOverflownException("Corrupted deadline data in save file");
+            }
+            task = new Deadline(description, parts[3]);
+            break;
+        case "E":
+            if (parts.length < 5) {
+                throw new StackOverflownException("Corrupted event data in save file");
+            }
+            task = new Event(description, parts[3], parts[4]);
+            break;
+        default:
+            throw new StackOverflownException("Unknown task type in save file: " + taskType);
         }
 
         if (isDone) {
