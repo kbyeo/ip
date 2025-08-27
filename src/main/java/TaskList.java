@@ -45,7 +45,7 @@ public class TaskList {
         autoSave();
     }
 
-    public void addDeadline(String description, String byDate) throws EmptyDescriptionException {
+    public void addDeadline(String description, String byDate) throws EmptyDescriptionException, StackOverflownException {
         if (description.trim().isEmpty()) {
             throw new EmptyDescriptionException("deadline");
         }
@@ -58,7 +58,7 @@ public class TaskList {
         autoSave();
     }
 
-    public void addEvent(String description, String from, String to) throws EmptyDescriptionException {
+    public void addEvent(String description, String from, String to) throws EmptyDescriptionException, StackOverflownException {
         if (description.trim().isEmpty()) {
             throw new EmptyDescriptionException("event");
         }
