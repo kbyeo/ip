@@ -1,3 +1,10 @@
+package stackoverflown.parser;
+
+import stackoverflown.exception.StackOverflownException;
+import stackoverflown.exception.EmptyDescriptionException;
+import stackoverflown.exception.InvalidFormatException;
+import stackoverflown.exception.InvalidTaskNumberException;
+
 /**
  * Parses user input commands and extracts relevant information.
  * Handles command validation and parameter extraction.

@@ -1,3 +1,9 @@
+package stackoverflown.task;
+
+/**
+ * Abstract base class for all task types.
+ * Provides common functionality for task management.
+ */
 public abstract class Task {
     //description of the task involved
     private String description;
