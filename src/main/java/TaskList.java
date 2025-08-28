@@ -1,47 +1,41 @@
 import java.util.ArrayList;
 
 public class TaskList {
-    //list of tasks are stored as an array of Tasks
     private ArrayList<Task> tasks;
-    private int taskCount;
-    private static final int MAX_TASKS = 100;
     private Storage storage;
-    //line separation variable here to minimise duplication of code
-    private String lineSeparation = "____________________________________________________________";
 
-
+    /**
+     * Constructor that initializes empty task list.
+     */
     public TaskList() {
         this.tasks = new ArrayList<>();
-        taskCount = 0;
     }
 
     /**
-     * Constructor that loads existing tasks from storage.
+     * Constructor that initializes task list with existing tasks.
+     *
+     * @param tasks ArrayList of existing tasks
+     */
+    public TaskList(ArrayList<Task> tasks) {
+        this.tasks = tasks != null ? tasks : new ArrayList<>();
+    }
+
+    /**
+     * Sets the storage for auto-saving functionality.
      *
      * @param storage Storage instance for file operations
      */
-    public TaskList(Storage storage) {
+    public void setStorage(Storage storage) {
         this.storage = storage;
-        try {
-            this.tasks = storage.loadTasks();
-            this.taskCount = this.tasks.size();
-        } catch (StackOverflownException e) {
-            System.out.println(lineSeparation);
-            System.out.println(" " + e.getMessage());
-            System.out.println(lineSeparation);
-            this.tasks = new ArrayList<>(); // start with empty list if loading fails
-            this.taskCount = 0;
-        }
     }
 
-    //methods to add various tasks types to the list
+    // Update all task modification methods to remove UI logic and simplify auto-save
     public void addToDo(String description) throws EmptyDescriptionException {
         if (description.trim().isEmpty()) {
             throw new EmptyDescriptionException("todo");
         }
         ToDo newTask = new ToDo(description);
         this.tasks.add(newTask);
-        this.taskCount++;
         autoSave();
     }
 
@@ -54,7 +48,6 @@ public class TaskList {
         }
         Deadline newTask = new Deadline(description, byDate);
         this.tasks.add(newTask);
-        this.taskCount++;
         autoSave();
     }
 
@@ -70,56 +63,34 @@ public class TaskList {
         }
         Event newTask = new Event(description, from, to);
         this.tasks.add(newTask);
-        this.taskCount++;
         autoSave();
     }
 
-    public void deleteTask(int index) throws InvalidTaskNumberException {
+    public Task deleteTask(int index) throws InvalidTaskNumberException {
         if (index < 0 || index >= tasks.size()) {
             throw new InvalidTaskNumberException();
         }
         Task removedTask = tasks.remove(index);
-        this.taskCount--;
-        String deleteMessage = String.format("%s\n Poof! Task vanished from existence:\n   %s\n Your task arsenal now stands at %d strong!\n%s",
-                lineSeparation, removedTask, tasks.size(), lineSeparation);
-        System.out.println(deleteMessage);
         autoSave();
+        return removedTask; // Return the deleted task for UI display
     }
 
-    //get the task count
-    public int getTaskCount() {
-        return this.taskCount;
-    }
-
-    //get the task at index
-    public Task getTask(int index) {
-        return this.tasks.get(index);
-    }
-
-    public boolean isEmpty() {
-        return taskCount == 0;
-    }
-
-    public void markTask(int index) throws InvalidTaskNumberException {
-        if (index < 0 || index >= taskCount) {
+    public Task markTask(int index) throws InvalidTaskNumberException {
+        if (index < 0 || index >= tasks.size()) {
             throw new InvalidTaskNumberException();
         }
         tasks.get(index).markDone();
-        String markMessage = String.format("%s\n Boom! That task is history - marked as done and dusted\n%s\n%s",
-                lineSeparation, this.tasks.get(index), lineSeparation);
-        System.out.println(markMessage);
         autoSave();
+        return tasks.get(index); // Return the marked task for UI display
     }
 
-    public void unmarkTask(int index) throws InvalidTaskNumberException {
-        if (index < 0 || index >= taskCount) {
+    public Task unmarkTask(int index) throws InvalidTaskNumberException {
+        if (index < 0 || index >= tasks.size()) {
             throw new InvalidTaskNumberException();
         }
-        this.tasks.get(index).unmarkDone();
-        String unmarkMessage = String.format("%s\n Aha! This task is no longer done - it's waiting for your magic" +
-                        " touch again\n%s\n%s", lineSeparation, this.tasks.get(index), lineSeparation);
-        System.out.println(unmarkMessage);
+        tasks.get(index).unmarkDone();
         autoSave();
+        return tasks.get(index); // Return the unmarked task for UI display
     }
 
     /**
@@ -127,26 +98,38 @@ public class TaskList {
      * Silently handles save errors to avoid disrupting user experience.
      */
     private void autoSave() {
-        try {
-            storage.saveTasks(tasks);
-            System.out.println("autosaved");
-        } catch (StackOverflownException e) {
-            // silently handle save errors - don't disrupt user experience
+        if (storage != null) {
+            try {
+                storage.saveTasks(tasks);
+            } catch (StackOverflownException e) {
+                // Silently handle save errors - don't disrupt user experience
+                // In production, you might want to log this error
+            }
         }
     }
 
-    //override toString to simplifly handling of TaskList in other classes
+    public int getTaskCount() {
+        return this.tasks.size();
+    }
+
+    public Task getTask(int index) {
+        return this.tasks.get(index);
+    }
+
+    public boolean isEmpty() {
+        return tasks.isEmpty();
+    }
+
     @Override
     public String toString() {
         if (tasks.isEmpty()) {
             return "Your task list is as empty as my coffee cup. Time to add some tasks!";
         }
         String result = "buckle up! Here comes your grand, magnificent, absolutely dazzling list of tasks:\n";
-        for (int i = 0; i < taskCount; i++) {
+        for (int i = 0; i < tasks.size(); i++) {
             String temp = String.format("%s. %s\n", i + 1, this.tasks.get(i));
             result = result + temp;
         }
         return result.trim();
     }
-
 }
