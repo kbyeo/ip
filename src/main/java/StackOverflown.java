@@ -1,135 +1,157 @@
-import java.util.Scanner;
-
+/**
+ * Main class for StackOverflown chatbot application.
+ * Orchestrates interaction between Ui, Storage, TaskList, and Parser components.
+ */
 public class StackOverflown {
+    private Storage storage;
+    private TaskList tasks;
+    private Ui ui;
 
-    public static void main(String[] args) {
-        String lineSeparation = "____________________________________________________________";
-        String botName = "StackOverflown";
-        String exitLine = "Aww, you're leaving already? It's been such a\n pleasure, can't wait till next time! :)";
-        String decoratedExit = String.format("%s\n %s\n%s", lineSeparation, exitLine, lineSeparation);
-        String introLine = String.format("Hey! %s here, thrilled to see you!\n Let's dive RIGHT in, what can I do for you? :)", botName);
-        String decoratedIntro = String.format("%s\n %s\n%s", lineSeparation, introLine, lineSeparation);
+    /**
+     * Constructor that initializes all components.
+     * Uses default data file path.
+     */
+    public StackOverflown() {
+        ui = new Ui();
+        storage = new Storage();
+        try {
+            tasks = new TaskList(storage.loadTasks());
+        } catch (StackOverflownException e) {
+            ui.showLoadingError();
+            tasks = new TaskList();
+        }
+        tasks.setStorage(storage); // Enable auto-save functionality
+    }
 
-        Storage storage = new Storage();
-        TaskList currentTasks = new TaskList(storage);
+    /**
+     * Main application loop.
+     * Handles user commands and coordinates between components.
+     */
+    public void run() {
+        ui.showWelcome();
+        boolean isExit = false;
 
-        System.out.println(decoratedIntro);
-        Scanner scanner = new Scanner(System.in);
-        String userInput = scanner.nextLine();
-
-        while (!userInput.equals("bye")) {
+        while (!isExit) {
             try {
-                handleCommand(currentTasks, userInput, lineSeparation);
+                String input = ui.readCommand();
+                Parser.CommandType command = Parser.getCommandType(input);
+
+                switch (command) {
+                case BYE:
+                    isExit = true;
+                    break;
+                case LIST:
+                    ui.showTaskList(tasks);
+                    break;
+                case TODO:
+                    handleTodoCommand(input);
+                    break;
+                case DEADLINE:
+                    handleDeadlineCommand(input);
+                    break;
+                case EVENT:
+                    handleEventCommand(input);
+                    break;
+                case MARK:
+                    handleMarkCommand(input);
+                    break;
+                case UNMARK:
+                    handleUnmarkCommand(input);
+                    break;
+                case DELETE:
+                    handleDeleteCommand(input);
+                    break;
+                default:
+                    throw new InvalidCommandException(input);
+                }
+
             } catch (StackOverflownException e) {
-                System.out.println(lineSeparation + "\n " + e.getMessage() + "\n" + lineSeparation);
+                ui.showError(e.getMessage());
             }
-            userInput = scanner.nextLine();
-        }
-        System.out.println(decoratedExit);
-        scanner.close();
-
-    }
-
-    private static void handleCommand(TaskList currentTasks, String input, String lineSeparation) throws StackOverflownException {
-        if (input.equals("list")) {
-            String listDisplay = String.format("%s\n%s\n%s", lineSeparation, currentTasks, lineSeparation);
-            System.out.println(listDisplay);
-        } else if (input.startsWith("mark ")) {
-            handleMarkCommand(currentTasks, input, lineSeparation);
-        } else if (input.startsWith("unmark ")) {
-            handleUnmarkCommand(currentTasks, input, lineSeparation);
-        } else if (input.startsWith("todo ")) {
-            handleTodoCommand(currentTasks, input, lineSeparation);
-        } else if (input.startsWith("deadline ")) {
-            handleDeadlineCommand(currentTasks, input, lineSeparation);
-        } else if (input.startsWith("event ")) {
-            handleEventCommand(currentTasks, input, lineSeparation);
-        } else if (input.equals("todo")) {
-            throw new EmptyDescriptionException("todo");
-        } else if (input.equals("deadline")) {
-            throw new EmptyDescriptionException("deadline");
-        } else if (input.equals("event")) {
-            throw new EmptyDescriptionException("event");
-        } else if (input.startsWith("delete ")) {
-            handleDeleteCommand(currentTasks, input, lineSeparation);
-        } else {
-            throw new InvalidCommandException(input);
-        }
-    }
-
-    private static void handleMarkCommand(TaskList currentTasks, String input, String lineSeparation) throws InvalidTaskNumberException {
-        try {
-            int taskIndex = Integer.parseInt(input.substring(5)) - 1;
-            currentTasks.markTask(taskIndex);
-        } catch (NumberFormatException e) {
-            throw new InvalidTaskNumberException();
-        }
-    }
-
-    private static void handleUnmarkCommand(TaskList currentTasks, String input, String lineSeparation) throws InvalidTaskNumberException {
-        try {
-            int taskIndex = Integer.parseInt(input.substring(7)) - 1;
-            currentTasks.unmarkTask(taskIndex);
-        } catch (NumberFormatException e) {
-            throw new InvalidTaskNumberException();
-        }
-    }
-
-    private static void handleTodoCommand(TaskList currentTasks, String input, String lineSeparation) throws EmptyDescriptionException {
-        String description = input.substring(5);
-        currentTasks.addToDo(description);
-        int taskNumber = currentTasks.getTaskCount();
-        String addedMessage = String.format("%s\nBoom! A ToDo task just joined the party: %s\nYour task arsenal now stands at %s strong!\n%s",
-                lineSeparation, currentTasks.getTask(taskNumber - 1), taskNumber, lineSeparation);
-        System.out.println(addedMessage);
-    }
-
-    private static void handleDeadlineCommand(TaskList currentTasks, String input, String lineSeparation)
-            throws InvalidFormatException, EmptyDescriptionException, StackOverflownException {
-        String content = input.substring(9);
-        String[] parts = content.split(" /by ");
-        if (parts.length != 2) {
-            throw new InvalidFormatException("deadline <DESCRIPTION> /by <DATE/TIME>");
         }
 
-        currentTasks.addDeadline(parts[0], parts[1]); // Can now throw date parsing exception
-        int taskNumber = currentTasks.getTaskCount();
-        String addedMessage = String.format("%s\nAll set! A Deadline task just joined the party: %s\nYour task arsenal now stands at %s strong!\n%s",
-                lineSeparation, currentTasks.getTask(taskNumber - 1), taskNumber, lineSeparation);
-        System.out.println(addedMessage);
+        ui.showGoodbye();
+        ui.close();
     }
 
-    private static void handleEventCommand(TaskList currentTasks, String input, String lineSeparation)
-            throws InvalidFormatException, EmptyDescriptionException, StackOverflownException {
-        String content = input.substring(6);
-        String[] parts = content.split(" /from ");
-        if (parts.length != 2) {
-            throw new InvalidFormatException("event <DESCRIPTION> /from <START> /to <END>");
-        }
-
-        String[] timeParts = parts[1].split(" /to ");
-        if (timeParts.length != 2) {
-            throw new InvalidFormatException("event <DESCRIPTION> /from <START> /to <END>");
-        }
-
-        currentTasks.addEvent(parts[0], timeParts[0], timeParts[1]); // Can now throw date parsing exception
-        int taskNumber = currentTasks.getTaskCount();
-        String addedMessage = String.format("%s\nTada! An Event task just joined the party: %s\nYour task arsenal now stands at %s strong!\n%s",
-                lineSeparation, currentTasks.getTask(taskNumber - 1), taskNumber, lineSeparation);
-        System.out.println(addedMessage);
+    /**
+     * Handles todo command by parsing input and adding task.
+     *
+     * @param input user input string
+     * @throws StackOverflownException if parsing or task creation fails
+     */
+    private void handleTodoCommand(String input) throws StackOverflownException {
+        String description = Parser.parseTodoCommand(input);
+        tasks.addToDo(description);
+        ui.showTaskAdded(tasks.getTask(tasks.getTaskCount() - 1), tasks.getTaskCount(), "todo");
     }
 
-    private static void handleDeleteCommand(TaskList currentTasks, String input, String lineSeparation) throws InvalidTaskNumberException {
-        try {
-            int taskIndex = Integer.parseInt(input.substring(7)) - 1;
-            currentTasks.deleteTask(taskIndex);
-        } catch (NumberFormatException e) {
-            throw new InvalidTaskNumberException();
-        }
+    /**
+     * Handles deadline command by parsing input and adding deadline task.
+     *
+     * @param input user input string
+     * @throws StackOverflownException if parsing, date parsing, or task creation fails
+     */
+    private void handleDeadlineCommand(String input) throws StackOverflownException {
+        String[] parts = Parser.parseDeadlineCommand(input);
+        tasks.addDeadline(parts[0], parts[1]);
+        ui.showTaskAdded(tasks.getTask(tasks.getTaskCount() - 1), tasks.getTaskCount(), "deadline");
     }
 
+    /**
+     * Handles event command by parsing input and adding event task.
+     *
+     * @param input user input string
+     * @throws StackOverflownException if parsing, date parsing, or task creation fails
+     */
+    private void handleEventCommand(String input) throws StackOverflownException {
+        String[] parts = Parser.parseEventCommand(input);
+        tasks.addEvent(parts[0], parts[1], parts[2]);
+        ui.showTaskAdded(tasks.getTask(tasks.getTaskCount() - 1), tasks.getTaskCount(), "event");
+    }
 
+    /**
+     * Handles mark command by parsing task index and marking task as done.
+     *
+     * @param input user input string
+     * @throws StackOverflownException if parsing fails or invalid task number
+     */
+    private void handleMarkCommand(String input) throws StackOverflownException {
+        int taskIndex = Parser.parseTaskIndex(input, 4);
+        Task markedTask = tasks.markTask(taskIndex);
+        ui.showTaskMarked(markedTask);
+    }
+
+    /**
+     * Handles unmark command by parsing task index and unmarking task.
+     *
+     * @param input user input string
+     * @throws StackOverflownException if parsing fails or invalid task number
+     */
+    private void handleUnmarkCommand(String input) throws StackOverflownException {
+        int taskIndex = Parser.parseTaskIndex(input, 6);
+        Task unmarkedTask = tasks.unmarkTask(taskIndex);
+        ui.showTaskUnmarked(unmarkedTask);
+    }
+
+    /**
+     * Handles delete command by parsing task index and deleting task.
+     *
+     * @param input user input string
+     * @throws StackOverflownException if parsing fails or invalid task number
+     */
+    private void handleDeleteCommand(String input) throws StackOverflownException {
+        int taskIndex = Parser.parseTaskIndex(input, 6);
+        Task deletedTask = tasks.deleteTask(taskIndex);
+        ui.showTaskDeleted(deletedTask, tasks.getTaskCount());
+    }
+
+    /**
+     * Main entry point for the application.
+     *
+     * @param args command line arguments (not used)
+     */
+    public static void main(String[] args) {
+        new StackOverflown().run();
+    }
 }
-
-
-
