@@ -1,5 +1,6 @@
 package stackoverflown.ui;
 
+import java.util.ArrayList;
 import java.util.Scanner;
 import stackoverflown.task.TaskList;
 import stackoverflown.task.Task;
@@ -138,4 +139,33 @@ public class Ui {
     public void showLoadingError() {
         showError("Oops! Had trouble loading your saved tasks. Starting with a fresh task list!");
     }
+
+    /**
+     * Displays the results of a task search operation.
+     *
+     * <p>If no tasks are found, shows a helpful message suggesting to add tasks.
+     * If tasks are found, displays them in a numbered list format similar to
+     * the main task list display.</p>
+     *
+     * @param foundTasks ArrayList of tasks that match the search keyword
+     * @param keyword the search keyword that was used
+     */
+    public void showFindResults(ArrayList<Task> foundTasks, String keyword) {
+        if (foundTasks.isEmpty()) {
+            String message = String.format("No tasks found with keyword '%s'. Time to add some tasks!", keyword);
+            String display = String.format("%s\n %s\n%s", LINE_SEPARATION, message, LINE_SEPARATION);
+            System.out.println(display);
+        } else {
+            String header = String.format("Here are the matching tasks in your list:");
+            StringBuilder result = new StringBuilder(LINE_SEPARATION + "\n " + header + "\n");
+
+            for (int i = 0; i < foundTasks.size(); i++) {
+                result.append(String.format(" %d.%s\n", i + 1, foundTasks.get(i)));
+            }
+
+            result.append(LINE_SEPARATION);
+            System.out.println(result.toString());
+        }
+    }
+
 }

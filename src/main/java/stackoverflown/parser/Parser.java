@@ -15,7 +15,7 @@ public class Parser {
      * Represents different types of commands the user can input.
      */
     public enum CommandType {
-        TODO, DEADLINE, EVENT, LIST, MARK, UNMARK, DELETE, BYE, UNKNOWN
+        TODO, DEADLINE, EVENT, LIST, MARK, UNMARK, DELETE, BYE, FIND, UNKNOWN
     }
 
     /**
@@ -43,6 +43,8 @@ public class Parser {
             return CommandType.UNMARK;
         } else if (command.startsWith("delete ")) {
             return CommandType.DELETE;
+        } else if (command.startsWith("find ")) {
+            return CommandType.FIND;
         } else {
             return CommandType.UNKNOWN;
         }
@@ -125,5 +127,21 @@ public class Parser {
         } catch (NumberFormatException | StringIndexOutOfBoundsException e) {
             throw new InvalidTaskNumberException();
         }
+    }
+
+    /**
+     * Extracts search keyword from find command.
+     *
+     * <p>Parses input in the format: "find KEYWORD"</p>
+     *
+     * @param input the user input string containing the find command
+     * @return the search keyword with leading/trailing whitespace trimmed
+     * @throws EmptyDescriptionException if no keyword is provided after "find"
+     */
+    public static String parseFindCommand(String input) throws StackOverflownException {
+        if (input.trim().equals("find")) {
+            throw new EmptyDescriptionException("find keyword");
+        }
+        return input.substring(5).trim();
     }
 }
