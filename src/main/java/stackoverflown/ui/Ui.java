@@ -1,4 +1,8 @@
+package stackoverflown.ui;
+
 import java.util.Scanner;
+import stackoverflown.task.TaskList;
+import stackoverflown.task.Task;
 
 /**
  * Handles interactions with the user.

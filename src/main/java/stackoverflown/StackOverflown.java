@@ -1,3 +1,12 @@
+package stackoverflown;
+
+import stackoverflown.ui.Ui;
+import stackoverflown.parser.Parser;
+import stackoverflown.storage.Storage;
+import stackoverflown.task.TaskList;
+import stackoverflown.task.Task;
+import stackoverflown.exception.StackOverflownException;
+import stackoverflown.exception.InvalidCommandException;
 /**
  * Main class for StackOverflown chatbot application.
  * Orchestrates interaction between Ui, Storage, TaskList, and Parser components.
