@@ -1,5 +1,6 @@
 package stackoverflown;
 
+import java.util.ArrayList;
 import stackoverflown.ui.Ui;
 import stackoverflown.parser.Parser;
 import stackoverflown.storage.Storage;
@@ -69,6 +70,9 @@ public class StackOverflown {
                     break;
                 case DELETE:
                     handleDeleteCommand(input);
+                    break;
+                case FIND:
+                    handleFindCommand(input);
                     break;
                 default:
                     throw new InvalidCommandException(input);
@@ -153,6 +157,18 @@ public class StackOverflown {
         int taskIndex = Parser.parseTaskIndex(input, 6);
         Task deletedTask = tasks.deleteTask(taskIndex);
         ui.showTaskDeleted(deletedTask, tasks.getTaskCount());
+    }
+
+    /**
+     * Handles find command by parsing keyword and searching tasks.
+     *
+     * @param input the user input string containing find command and keyword
+     * @throws StackOverflownException if parsing fails or keyword is empty
+     */
+    private void handleFindCommand(String input) throws StackOverflownException {
+        String keyword = Parser.parseFindCommand(input);
+        ArrayList<Task> foundTasks = tasks.findTasks(keyword);
+        ui.showFindResults(foundTasks, keyword);
     }
 
     /**
