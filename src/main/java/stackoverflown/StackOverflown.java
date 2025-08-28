@@ -9,7 +9,24 @@ import stackoverflown.exception.StackOverflownException;
 import stackoverflown.exception.InvalidCommandException;
 /**
  * Main class for StackOverflown chatbot application.
- * Orchestrates interaction between Ui, Storage, TaskList, and Parser components.
+ *
+ * <p>StackOverflown is a personal task management chatbot that helps users organize
+ * their ToDo tasks, Deadlines, and Events. The application provides a command-line
+ * interface for adding, managing, and tracking tasks with persistent storage.</p>
+ *
+ * <p>Key features include:
+ * <ul>
+ * <li>Adding different types of tasks (ToDo, Deadline, Event)</li>
+ * <li>Marking tasks as done/undone</li>
+ * <li>Deleting tasks</li>
+ * <li>Listing all tasks</li>
+ * <li>Automatic file-based storage</li>
+ * </ul>
+ * </p>
+ *
+ * @author Yeo Kai Bin
+ * @version 0.1
+ * @since 2025
  */
 public class StackOverflown {
     private Storage storage;
@@ -17,8 +34,12 @@ public class StackOverflown {
     private Ui ui;
 
     /**
-     * Constructor that initialises all components.
-     * Uses default data file path.
+     * Constructs a new StackOverflown instance with default components.
+     *
+     * <p>Initializes the UI, Storage, and TaskList components. Attempts to load
+     * existing tasks from storage, and falls back to empty task list if loading fails.</p>
+     *
+     * <p>Automatically sets up auto-save functionality by connecting TaskList to Storage.</p>
      */
     public StackOverflown() {
         ui = new Ui();
@@ -33,8 +54,18 @@ public class StackOverflown {
     }
 
     /**
-     * Main application loop.
-     * Handles user commands and coordinates between components.
+     * Starts the main application loop.
+     *
+     * <p>Handles the complete application lifecycle including:
+     * <ul>
+     * <li>Displaying welcome message</li>
+     * <li>Reading and processing user commands</li>
+     * <li>Handling exceptions and displaying error messages</li>
+     * <li>Displaying goodbye message and cleanup</li>
+     * </ul>
+     * </p>
+     *
+     * <p>The loop continues until the user enters the 'bye' command.</p>
      */
     public void run() {
         ui.showWelcome();
@@ -84,10 +115,10 @@ public class StackOverflown {
     }
 
     /**
-     * Handles todo command by parsing input and adding task.
+     * Handles todo command by parsing input and adding the task.
      *
-     * @param input user input string
-     * @throws StackOverflownException if parsing or task creation fails
+     * @param input the raw user input containing todo command and description
+     * @throws StackOverflownException if parsing fails or task creation fails
      */
     private void handleTodoCommand(String input) throws StackOverflownException {
         String description = Parser.parseTodoCommand(input);
@@ -96,10 +127,10 @@ public class StackOverflown {
     }
 
     /**
-     * Handles deadline command by parsing input and adding deadline task.
+     * Handles deadline command by parsing input and adding the deadline task.
      *
-     * @param input user input string
-     * @throws StackOverflownException if parsing, date parsing, or task creation fails
+     * @param input the raw user input containing deadline command, description, and date
+     * @throws StackOverflownException if parsing fails, date parsing fails, or task creation fails
      */
     private void handleDeadlineCommand(String input) throws StackOverflownException {
         String[] parts = Parser.parseDeadlineCommand(input);
@@ -108,10 +139,10 @@ public class StackOverflown {
     }
 
     /**
-     * Handles event command by parsing input and adding event task.
+     * Handles event command by parsing input and adding the event task.
      *
-     * @param input user input string
-     * @throws StackOverflownException if parsing, date parsing, or task creation fails
+     * @param input the raw user input containing event command, description, from time, and to time
+     * @throws StackOverflownException if parsing fails, date parsing fails, or task creation fails
      */
     private void handleEventCommand(String input) throws StackOverflownException {
         String[] parts = Parser.parseEventCommand(input);

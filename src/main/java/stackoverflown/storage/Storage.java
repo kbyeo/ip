@@ -18,15 +18,45 @@ import stackoverflown.task.Event;
 import stackoverflown.exception.StackOverflownException;
 
 /**
- * Handles loading and saving of tasks to the hard disk.
- * Uses relative file path for OS independence.
- * Supports LocalDateTime parsing for Deadline and Event tasks.
+ * Handles persistent storage of tasks to and from the file system.
+ *
+ * <p>The Storage class manages serialization and deserialization of task data
+ * using a custom pipe-delimited text format. It automatically creates necessary
+ * directories and provides robust error handling for file operations.</p>
+ *
+ * <p>Storage format for each task type:
+ * <ul>
+ * <li>ToDo: "T | 0/1 | description"</li>
+ * <li>Deadline: "D | 0/1 | description | yyyy-M-d HHmm"</li>
+ * <li>Event: "E | 0/1 | description | yyyy-M-d HHmm | yyyy-M-d HHmm"</li>
+ * </ul>
+ * Where 0/1 represents isDone status (0=not done, 1=done)</p>
+ *
+ * <p>Files are stored in "../data/stackoverflown.txt" relative to the application
+ * working directory, with automatic directory creation if needed.</p>
+ *
+ * @author Yeo Kai Bin
+ * @version 0.1
+ * @since 2025
  */
 public class Storage {
     private static final String DATA_FOLDER = "../data";
     private static final String FILE_PATH = "../data/stackoverflown.txt";
     private static final DateTimeFormatter STORAGE_FORMAT = DateTimeFormatter.ofPattern("yyyy-M-d HHmm");
 
+    /**
+     * Loads all tasks from the storage file.
+     *
+     * <p>Creates the data directory and file if they don't exist. Parses each
+     * line of the file and reconstructs the appropriate Task objects. Empty lines
+     * are skipped, and corrupted data triggers appropriate exceptions.</p>
+     *
+     * <p>For first-time users where no storage file exists, returns an empty
+     * task list without throwing an exception.</p>
+     *
+     * @return ArrayList of loaded Task objects, empty if no storage file exists
+     * @throws StackOverflownException if file reading fails or data corruption is detected
+     */
     public ArrayList<Task> loadTasks() throws StackOverflownException {
         ArrayList<Task> tasks = new ArrayList<>();
 
@@ -57,10 +87,14 @@ public class Storage {
     }
 
     /**
-     * Saves all tasks to the data file.
+     * Saves all tasks to the storage file.
      *
-     * @param tasks ArrayList of tasks to save
-     * @throws StackOverflownException if saving fails
+     * <p>Overwrites the existing file with current task data. Each task is
+     * serialized to a pipe-delimited format appropriate for its type. Creates
+     * the data directory if it doesn't exist.</p>
+     *
+     * @param tasks the ArrayList of Task objects to save
+     * @throws StackOverflownException if file writing fails or directory creation fails
      */
     public void saveTasks(ArrayList<Task> tasks) throws StackOverflownException {
         try {
@@ -79,6 +113,14 @@ public class Storage {
         }
     }
 
+    /**
+     * Creates the data directory if it doesn't exist.
+     *
+     * <p>Uses NIO Files API to create the directory structure safely. If the
+     * directory already exists, no action is taken.</p>
+     *
+     * @throws IOException if directory creation fails due to permissions or file system issues
+     */
     private void createDataDirectoryIfNotExists() throws IOException {
         Path dataDir = Paths.get(DATA_FOLDER);
         if (!Files.exists(dataDir)) {
@@ -86,6 +128,22 @@ public class Storage {
         }
     }
 
+    /**
+     * Parses a single line from storage file into a Task object.
+     *
+     * <p>Expected format: "TYPE | DONE | DESCRIPTION [| DATETIME] [| DATETIME]"
+     * <ul>
+     * <li>TYPE: T, D, or E</li>
+     * <li>DONE: 0 (not done) or 1 (done)</li>
+     * <li>DESCRIPTION: task description text</li>
+     * <li>DATETIME: date-time in yyyy-M-d HHmm format (for D and E types)</li>
+     * </ul>
+     * </p>
+     *
+     * @param line the line from storage file to parse
+     * @return the reconstructed Task object (ToDo, Deadline, or Event)
+     * @throws StackOverflownException if line format is invalid or date parsing fails
+     */
     private Task parseTaskFromLine(String line) throws StackOverflownException {
         String[] parts = line.split(" \\| ");
         if (parts.length < 3) {
@@ -137,6 +195,20 @@ public class Storage {
         return task;
     }
 
+    /**
+     * Formats a Task object into storage file format.
+     *
+     * <p>Creates pipe-delimited string representation appropriate for each task type:
+     * <ul>
+     * <li>ToDo: "T | DONE | DESCRIPTION"</li>
+     * <li>Deadline: "D | DONE | DESCRIPTION | DATE_TIME"</li>
+     * <li>Event: "E | DONE | DESCRIPTION | FROM_TIME | TO_TIME"</li>
+     * </ul>
+     * </p>
+     *
+     * @param task the Task object to format for storage
+     * @return the formatted string ready for writing to file
+     */
     private String formatTaskForFile(Task task) {
         String taskType = task.getTypeIcon().replace("[", "").replace("]", "");
         String isDone = task.isDone() ? "1" : "0";

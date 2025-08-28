@@ -5,13 +5,37 @@ import stackoverflown.task.TaskList;
 import stackoverflown.task.Task;
 
 /**
- * Handles interactions with the user.
- * Manages input/output operations and message formatting.
+ * Handles all user interface operations for the StackOverflown application.
+ *
+ * <p>The Ui class manages all interactions between the user and the application,
+ * including input reading, output formatting, and display of various application
+ * states. It provides a consistent command-line interface with formatted messages
+ * and visual separators.</p>
+ *
+ * <p>Key responsibilities include:
+ * <ul>
+ * <li>Reading user input commands</li>
+ * <li>Displaying welcome and goodbye messages</li>
+ * <li>Formatting and displaying task lists and individual tasks</li>
+ * <li>Showing error messages and loading notifications</li>
+ * <li>Providing feedback for user actions (add, mark, delete, etc.)</li>
+ * </ul>
+ * </p>
+ *
+ * <p>All output is formatted with consistent visual separators and informative
+ * messages to enhance user experience.</p>
+ *
+ * @author Yeo Kai Bin
+ * @version 0.1
+ * @since 2025
  */
 public class Ui {
     private Scanner scanner;
     private static final String LINE_SEPARATION = "____________________________________________________________";
 
+    /**
+     * Constructs a new Ui instance and initializes input scanner.
+     */
     public Ui() {
         this.scanner = new Scanner(System.in);
     }
@@ -33,7 +57,10 @@ public class Ui {
     }
 
     /**
-     * Shows the welcome message when the application starts.
+     * Displays the welcome message when the application starts.
+     *
+     * <p>Shows the application logo and a friendly greeting message with
+     * visual formatting.</p>
      */
     public void showWelcome() {
         String botName = "StackOverflown";
@@ -43,7 +70,10 @@ public class Ui {
     }
 
     /**
-     * Shows the goodbye message when the application ends.
+     * Displays the goodbye message when the application exits.
+     *
+     * <p>Shows a farewell message with visual formatting to provide
+     * closure to the user session.</p>
      */
     public void showGoodbye() {
         String exitLine = "Aww, you're leaving already? It's been such a\n pleasure, can't wait till next time! :)";
@@ -52,7 +82,10 @@ public class Ui {
     }
 
     /**
-     * Shows error messages to the user.
+     * Displays an error message to the user.
+     *
+     * <p>Formats error messages with visual separators for clear visibility.
+     * Used for displaying exceptions and validation errors.</p>
      *
      * @param message the error message to display
      */
@@ -61,11 +94,15 @@ public class Ui {
     }
 
     /**
-     * Shows task added confirmation message.
+     * Shows confirmation message when a task is successfully added.
      *
-     * @param task the task that was added
-     * @param taskCount current number of tasks
-     * @param taskType type of task (ToDo, Deadline, Event)
+     * <p>Displays the newly added task and updates the user on the total
+     * number of tasks in their list. Includes contextual messaging based
+     * on the type of task added.</p>
+     *
+     * @param task the Task object that was added
+     * @param taskCount the new total number of tasks
+     * @param taskType the type of task added ("todo", "deadline", "event")
      */
     public void showTaskAdded(Task task, int taskCount, String taskType) {
         String message;
@@ -89,10 +126,13 @@ public class Ui {
     }
 
     /**
-     * Shows task deletion confirmation message.
+     * Shows confirmation message when a task is deleted.
      *
-     * @param task the task that was deleted
-     * @param taskCount current number of tasks after deletion
+     * <p>Displays the deleted task and updates the user on the remaining
+     * number of tasks in their list.</p>
+     *
+     * @param task the Task object that was deleted
+     * @param taskCount the number of tasks remaining after deletion
      */
     public void showTaskDeleted(Task task, int taskCount) {
         String deleteMessage = String.format("%s\n Poof! Task vanished from existence:\n   %s\n Your task arsenal now stands at %d strong!\n%s",
@@ -101,9 +141,12 @@ public class Ui {
     }
 
     /**
-     * Shows task marked as done message.
+     * Shows confirmation message when a task is marked as done.
      *
-     * @param task the task that was marked
+     * <p>Displays the task that was marked with congratulatory messaging
+     * to provide positive feedback for task completion.</p>
+     *
+     * @param task the Task object that was marked as done
      */
     public void showTaskMarked(Task task) {
         String markMessage = String.format("%s\n Boom! That task is history - marked as done and dusted\n   %s\n%s",
@@ -112,9 +155,12 @@ public class Ui {
     }
 
     /**
-     * Shows task unmarked message.
+     * Shows confirmation message when a task is unmarked (set as not done).
      *
-     * @param task the task that was unmarked
+     * <p>Displays the task that was unmarked with appropriate messaging
+     * to confirm the status change.</p>
+     *
+     * @param task the Task object that was unmarked
      */
     public void showTaskUnmarked(Task task) {
         String unmarkMessage = String.format("%s\n Aha! This task is no longer done - it's waiting for your magic touch again\n   %s\n%s",
@@ -123,9 +169,12 @@ public class Ui {
     }
 
     /**
-     * Shows the task list to the user.
+     * Displays the complete task list to the user.
      *
-     * @param taskList the TaskList object to display
+     * <p>Shows all tasks in a formatted list with visual separators. If the
+     * list is empty, displays an appropriate empty state message.</p>
+     *
+     * @param taskList the TaskList containing all current tasks
      */
     public void showTaskList(TaskList taskList) {
         String listDisplay = String.format("%s\n%s\n%s", LINE_SEPARATION, taskList, LINE_SEPARATION);
