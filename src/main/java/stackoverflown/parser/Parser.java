@@ -6,23 +6,47 @@ import stackoverflown.exception.InvalidFormatException;
 import stackoverflown.exception.InvalidTaskNumberException;
 
 /**
- * Parses user input commands and extracts relevant information.
- * Handles command validation and parameter extraction.
+ * Utility class for parsing user input commands and extracting relevant information.
+ *
+ * <p>The Parser class provides static methods to parse different types of user commands
+ * and validate their format. It handles command type identification and parameter extraction
+ * for all supported StackOverflown commands.</p>
+ *
+ * <p>Supported commands include:
+ * <ul>
+ * <li>todo - for creating ToDo tasks</li>
+ * <li>deadline - for creating Deadline tasks with due dates</li>
+ * <li>event - for creating Event tasks with start/end times</li>
+ * <li>list - for displaying all tasks</li>
+ * <li>mark/unmark - for changing task completion status</li>
+ * <li>delete - for removing tasks</li>
+ * <li>bye - for exiting the application</li>
+ * </ul>
+ * </p>
+ *
+ * @author Yeo Kai Bin
+ * @version 0.1
+ * @since 2025
  */
 public class Parser {
 
     /**
-     * Represents different types of commands the user can input.
+     * Enumeration of all supported command types in the StackOverflown application.
+     *
+     * <p>UNKNOWN represents any unrecognized command input.</p>
      */
     public enum CommandType {
         TODO, DEADLINE, EVENT, LIST, MARK, UNMARK, DELETE, BYE, FIND, UNKNOWN
     }
 
     /**
-     * Parses user input and returns the command type.
+     * Determines the command type from user input.
      *
-     * @param input user input string
-     * @return CommandType enum representing the command
+     * <p>Performs case-insensitive matching of command keywords. Commands are identified
+     * by their starting keyword, allowing for additional parameters.</p>
+     *
+     * @param input the user input string to analyze
+     * @return the corresponding CommandType enum value, or UNKNOWN if not recognized
      */
     public static CommandType getCommandType(String input) {
         String command = input.trim().toLowerCase();
@@ -51,11 +75,13 @@ public class Parser {
     }
 
     /**
-     * Extracts todo description from user input.
+     * Extracts the description from a todo command.
      *
-     * @param input user input string
-     * @return todo description
-     * @throws StackOverflownException if description is empty
+     * <p>Parses input in the format: "todo DESCRIPTION"</p>
+     *
+     * @param input the user input string containing the todo command
+     * @return the task description with leading/trailing whitespace trimmed
+     * @throws EmptyDescriptionException if the description is empty or only whitespace
      */
     public static String parseTodoCommand(String input) throws StackOverflownException {
         if (input.trim().equals("todo")) {
@@ -65,11 +91,14 @@ public class Parser {
     }
 
     /**
-     * Extracts deadline information from user input.
+     * Extracts description and due date from a deadline command.
      *
-     * @param input user input string
-     * @return String array with [description, by_date]
-     * @throws StackOverflownException if format is invalid or description is empty
+     * <p>Parses input in the format: "deadline DESCRIPTION /by DATE_TIME"</p>
+     *
+     * @param input the user input string containing the deadline command
+     * @return string array with [description, due_date]
+     * @throws EmptyDescriptionException if the description is empty
+     * @throws InvalidFormatException if the format doesn't match expected pattern
      */
     public static String[] parseDeadlineCommand(String input) throws StackOverflownException {
         if (input.trim().equals("deadline")) {
@@ -86,11 +115,14 @@ public class Parser {
     }
 
     /**
-     * Extracts event information from user input.
+     * Extracts description and time range from an event command.
      *
-     * @param input user input string
-     * @return String array with [description, from_time, to_time]
-     * @throws StackOverflownException if format is invalid or description is empty
+     * <p>Parses input in the format: "event DESCRIPTION /from START_TIME /to END_TIME"</p>
+     *
+     * @param input the user input string containing the event command
+     * @return string array with [description, from_time, to_time]
+     * @throws EmptyDescriptionException if the description is empty
+     * @throws InvalidFormatException if the format doesn't match expected pattern
      */
     public static String[] parseEventCommand(String input) throws StackOverflownException {
         if (input.trim().equals("event")) {
@@ -112,12 +144,14 @@ public class Parser {
     }
 
     /**
-     * Extracts task index from mark/unmark/delete commands.
+     * Extracts and validates task index from mark/unmark/delete commands.
      *
-     * @param input user input string
-     * @param commandLength length of the command word (4 for "mark", 6 for "unmark", 6 for "delete")
-     * @return task index (0-based)
-     * @throws InvalidTaskNumberException if index is invalid
+     * <p>Converts 1-based user input to 0-based array index for internal use.</p>
+     *
+     * @param input the user input string containing the command and task number
+     * @param commandLength the length of the command word (e.g., 4 for "mark", 6 for "delete")
+     * @return the task index converted to 0-based indexing
+     * @throws InvalidTaskNumberException if the index is not a valid number
      */
     public static int parseTaskIndex(String input, int commandLength) throws InvalidTaskNumberException {
         try {
