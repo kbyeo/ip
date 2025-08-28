@@ -17,7 +17,7 @@ public class StackOverflown {
     private Ui ui;
 
     /**
-     * Constructor that initializes all components.
+     * Constructor that initialises all components.
      * Uses default data file path.
      */
     public StackOverflown() {
