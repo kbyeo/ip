@@ -14,7 +14,8 @@ import javafx.scene.layout.VBox;
  *
  * <p>This class handles the interaction between the user interface components
  * and the core StackOverflown business logic. It manages user input processing,
- * display of chat messages, and application lifecycle events.</p>
+ * display of chat messages, and application lifecycle events with proper
+ * message display and circular avatars.</p>
  *
  * @author Yeo Kai Bin
  * @version 1.0
@@ -32,18 +33,43 @@ public class MainWindow extends AnchorPane {
 
     private StackOverflown stackOverflown;
 
-    private Image userImage = new Image(this.getClass().getResourceAsStream("/images/ipUserAvatar.png"));
-    private Image stackOverflownImage = new Image(this.getClass().getResourceAsStream("/images/ipBotAvatar.jpg"));
+    // Handle missing images gracefully
+    private Image userImage;
+    private Image stackOverflownImage;
+
+    /**
+     * Constructor that initializes images with fallback handling.
+     */
+    public MainWindow() {
+        // Try to load images, use null if not found (will be handled in DialogBox)
+        try {
+            userImage = new Image(this.getClass().getResourceAsStream("/images/ipUserAvatar.png"));
+        } catch (Exception e) {
+            userImage = null;
+        }
+
+        try {
+            stackOverflownImage = new Image(this.getClass().getResourceAsStream("/images/ipBotAvatar.jpg"));
+        } catch (Exception e) {
+            stackOverflownImage = null;
+        }
+    }
 
     /**
      * Initializes the MainWindow controller.
      *
-     * <p>Sets up the scroll pane to automatically scroll to the bottom when
-     * new dialog boxes are added, providing a natural chat-like experience.</p>
+     * <p>Sets up the scroll pane for proper auto-scrolling behavior that ensures
+     * new messages are always visible and long messages are fully displayed.</p>
      */
     @FXML
     public void initialize() {
-        scrollPane.vvalueProperty().bind(dialogContainer.heightProperty());
+        // Set up dialog container for proper content sizing
+        dialogContainer.prefWidthProperty().bind(scrollPane.widthProperty().subtract(2));
+
+        // Add listener to auto-scroll when content height changes
+        dialogContainer.heightProperty().addListener((observable, oldValue, newValue) -> {
+            Platform.runLater(() -> scrollPane.setVvalue(1.0));
+        });
     }
 
     /**
@@ -56,17 +82,35 @@ public class MainWindow extends AnchorPane {
 
         // Display welcome message
         String welcomeMessage = stackOverflown.getWelcomeMessage();
-        dialogContainer.getChildren().add(
-                DialogBox.getStackOverflownDialog(welcomeMessage, stackOverflownImage)
-        );
+        addBotMessage(welcomeMessage);
+    }
+
+    /**
+     * Adds a bot message to the dialog container.
+     *
+     * @param message the message text to display
+     */
+    private void addBotMessage(String message) {
+        DialogBox botDialog = DialogBox.getStackOverflownDialog(message, stackOverflownImage);
+        dialogContainer.getChildren().add(botDialog);
+    }
+
+    /**
+     * Adds a user message to the dialog container.
+     *
+     * @param message the message text to display
+     */
+    private void addUserMessage(String message) {
+        DialogBox userDialog = DialogBox.getUserDialog(message, userImage);
+        dialogContainer.getChildren().add(userDialog);
     }
 
     /**
      * Handles user input when Send button is clicked or Enter is pressed.
      *
      * <p>Processes the user command through StackOverflown, displays both the
-     * user input and bot response as dialog boxes, and handles application
-     * exit if the bye command is used.</p>
+     * user input and bot response as dialog boxes with proper scrolling,
+     * and handles application exit if the bye command is used.</p>
      */
     @FXML
     private void handleUserInput() {
@@ -75,14 +119,15 @@ public class MainWindow extends AnchorPane {
             return;
         }
 
-        String response = stackOverflown.getResponse(input);
-
-        dialogContainer.getChildren().addAll(
-                DialogBox.getUserDialog(input, userImage),
-                DialogBox.getStackOverflownDialog(response, stackOverflownImage)
-        );
-
+        // Clear input field immediately for better UX
         userInput.clear();
+
+        // Add user message
+        addUserMessage(input);
+
+        // Get and add bot response
+        String response = stackOverflown.getResponse(input);
+        addBotMessage(response);
 
         // Handle application exit
         if (input.trim().toLowerCase().equals("bye")) {
