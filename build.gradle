@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'application'
     id 'com.github.johnrengelman.shadow' version '7.1.2'
+    id 'org.openjfx.javafxplugin' version '0.0.13'
 }
 
 repositories {
@@ -27,7 +28,12 @@ test {
 }
 
 application {
-    mainClass = "stackoverflown.StackOverflown"
+    mainClass = "stackoverflown.Launcher"
+}
+
+javafx {
+    version = "17.0.2"
+    modules = [ 'javafx.controls', 'javafx.fxml' ]
 }
 
 shadowJar {

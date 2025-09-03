@@ -54,6 +54,182 @@ public class StackOverflown {
         tasks.setStorage(storage); // Enable auto-save functionality
     }
 
+    // ===== GUI INTERFACE METHODS =====
+    /**
+     * Gets the welcome message for GUI display.
+     *
+     * @return formatted welcome message string
+     */
+    public String getWelcomeMessage() {
+        return "Hey! StackOverflown here, thrilled to see you!\nLet's dive RIGHT in, what can I do for you? :)";
+    }
+
+    /**
+     * Processes user input and returns appropriate response for GUI.
+     *
+     * <p>This method provides a GUI-compatible interface that returns string responses
+     * instead of directly displaying output through the UI component.</p>
+     *
+     * @param input user input string
+     * @return formatted response string
+     */
+    public String getResponse(String input) {
+        try {
+            Parser.CommandType command = Parser.getCommandType(input);
+
+            switch (command) {
+                case BYE:
+                    return "Aww, you're leaving already? It's been such a\npleasure, can't wait till next time! :)";
+                case LIST:
+                    return getTaskListResponse();
+                case TODO:
+                    return handleTodoResponse(input);
+                case DEADLINE:
+                    return handleDeadlineResponse(input);
+                case EVENT:
+                    return handleEventResponse(input);
+                case MARK:
+                    return handleMarkResponse(input);
+                case UNMARK:
+                    return handleUnmarkResponse(input);
+                case DELETE:
+                    return handleDeleteResponse(input);
+                case FIND:
+                    return handleFindResponse(input);
+                default:
+                    throw new InvalidCommandException(input);
+            }
+
+        } catch (StackOverflownException e) {
+            return e.getMessage();
+        }
+    }
+
+    /**
+     * Gets formatted task list for GUI display.
+     *
+     * @return formatted task list string
+     */
+    private String getTaskListResponse() {
+        if (tasks.isEmpty()) {
+            return "Your task list is as empty as my coffee cup. Time to add some tasks!";
+        }
+
+        StringBuilder result = new StringBuilder("Here are your tasks:\n\n");
+        for (int i = 0; i < tasks.getTaskCount(); i++) {
+            result.append(String.format("%d. %s\n", i + 1, tasks.getTask(i)));
+        }
+        return result.toString().trim();
+    }
+
+    /**
+     * Handles todo command for GUI and returns response string.
+     *
+     * @param input user input string
+     * @return success message with task details
+     * @throws StackOverflownException if parsing or task creation fails
+     */
+    private String handleTodoResponse(String input) throws StackOverflownException {
+        String description = Parser.parseTodoCommand(input);
+        tasks.addToDo(description);
+        Task newTask = tasks.getTask(tasks.getTaskCount() - 1);
+        return String.format("Boom! A ToDo task just joined the party:\n%s\n\nYour task arsenal now stands at %d strong!",
+                newTask, tasks.getTaskCount());
+    }
+
+    /**
+     * Handles deadline command for GUI and returns response string.
+     *
+     * @param input user input string
+     * @return success message with task details
+     * @throws StackOverflownException if parsing or task creation fails
+     */
+    private String handleDeadlineResponse(String input) throws StackOverflownException {
+        String[] parts = Parser.parseDeadlineCommand(input);
+        tasks.addDeadline(parts[0], parts[1]);
+        Task newTask = tasks.getTask(tasks.getTaskCount() - 1);
+        return String.format("All set! A Deadline task just joined the party:\n%s\n\nYour task arsenal now stands at %d strong!",
+                newTask, tasks.getTaskCount());
+    }
+
+    /**
+     * Handles event command for GUI and returns response string.
+     *
+     * @param input user input string
+     * @return success message with task details
+     * @throws StackOverflownException if parsing or task creation fails
+     */
+    private String handleEventResponse(String input) throws StackOverflownException {
+        String[] parts = Parser.parseEventCommand(input);
+        tasks.addEvent(parts[0], parts[1], parts[2]);
+        Task newTask = tasks.getTask(tasks.getTaskCount() - 1);
+        return String.format("Tada! An Event task just joined the party:\n%s\n\nYour task arsenal now stands at %d strong!",
+                newTask, tasks.getTaskCount());
+    }
+    /**
+     * Handles mark command for GUI and returns response string.
+     *
+     * @param input user input string
+     * @return success message with task details
+     * @throws StackOverflownException if parsing fails or invalid task number
+     */
+    private String handleMarkResponse(String input) throws StackOverflownException {
+        int taskIndex = Parser.parseTaskIndex(input, 4);
+        Task markedTask = tasks.markTask(taskIndex);
+        return String.format("Boom! That task is history - marked as done and dusted:\n%s", markedTask);
+    }
+
+    /**
+     * Handles unmark command for GUI and returns response string.
+     *
+     * @param input user input string
+     * @return success message with task details
+     * @throws StackOverflownException if parsing fails or invalid task number
+     */
+    private String handleUnmarkResponse(String input) throws StackOverflownException {
+        int taskIndex = Parser.parseTaskIndex(input, 6);
+        Task unmarkedTask = tasks.unmarkTask(taskIndex);
+        return String.format("Aha! This task is no longer done - it's waiting for your magic touch again:\n%s", unmarkedTask);
+    }
+    /**
+     * Handles delete command for GUI and returns response string.
+     *
+     * @param input user input string
+     * @return success message with task details
+     * @throws StackOverflownException if parsing fails or invalid task number
+     */
+    private String handleDeleteResponse(String input) throws StackOverflownException {
+        int taskIndex = Parser.parseTaskIndex(input, 6);
+        Task deletedTask = tasks.deleteTask(taskIndex);
+        return String.format("Poof! Task vanished from existence:\n%s\n\nYour task arsenal now stands at %d strong!",
+                deletedTask, tasks.getTaskCount());
+    }
+
+    /**
+     * Handles find command for GUI and returns response string.
+     *
+     * @param input user input string
+     * @return search results formatted for display
+     * @throws StackOverflownException if parsing fails or keyword is empty
+     */
+    private String handleFindResponse(String input) throws StackOverflownException {
+        String keyword = Parser.parseFindCommand(input);
+        ArrayList<Task> foundTasks = tasks.findTasks(keyword);
+
+        if (foundTasks.isEmpty()) {
+            return String.format("No tasks found with keyword '%s'. Time to add some tasks!", keyword);
+        }
+
+        StringBuilder result = new StringBuilder("Here are the matching tasks in your list:\n\n");
+        for (int i = 0; i < foundTasks.size(); i++) {
+            result.append(String.format("%d. %s\n", i + 1, foundTasks.get(i)));
+        }
+        return result.toString().trim();
+    }
+
+
+
+    // ===== CLI INTERFACE METHODS =====
     /**
      * Starts the main application loop.
      *
