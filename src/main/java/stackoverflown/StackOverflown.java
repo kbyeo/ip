@@ -8,6 +8,7 @@ import stackoverflown.task.TaskList;
 import stackoverflown.task.Task;
 import stackoverflown.exception.StackOverflownException;
 import stackoverflown.exception.InvalidCommandException;
+
 /**
  * Main class for StackOverflown chatbot application.
  *
@@ -33,6 +34,10 @@ public class StackOverflown {
     private Storage storage;
     private TaskList tasks;
     private Ui ui;
+
+    static final int MARK_PARSE_VALUE = 4;
+    static final int UNMARK_PARSE_VALUE = 6;
+    static final int DELETE_PARSE_VALUE = 6;
 
     /**
      * Constructs a new StackOverflown instance with default components.
@@ -174,7 +179,7 @@ public class StackOverflown {
      * @throws StackOverflownException if parsing fails or invalid task number
      */
     private String handleMarkResponse(String input) throws StackOverflownException {
-        int taskIndex = Parser.parseTaskIndex(input, 4);
+        int taskIndex = Parser.parseTaskIndex(input, MARK_PARSE_VALUE);
         Task markedTask = tasks.markTask(taskIndex);
         return String.format("Boom! That task is history - marked as done and dusted:\n%s", markedTask);
     }
@@ -187,7 +192,7 @@ public class StackOverflown {
      * @throws StackOverflownException if parsing fails or invalid task number
      */
     private String handleUnmarkResponse(String input) throws StackOverflownException {
-        int taskIndex = Parser.parseTaskIndex(input, 6);
+        int taskIndex = Parser.parseTaskIndex(input, UNMARK_PARSE_VALUE);
         Task unmarkedTask = tasks.unmarkTask(taskIndex);
         return String.format("Aha! This task is no longer done - it's waiting for your magic touch again:\n%s", unmarkedTask);
     }
@@ -199,7 +204,7 @@ public class StackOverflown {
      * @throws StackOverflownException if parsing fails or invalid task number
      */
     private String handleDeleteResponse(String input) throws StackOverflownException {
-        int taskIndex = Parser.parseTaskIndex(input, 6);
+        int taskIndex = Parser.parseTaskIndex(input, DELETE_PARSE_VALUE);
         Task deletedTask = tasks.deleteTask(taskIndex);
         return String.format("Poof! Task vanished from existence:\n%s\n\nYour task arsenal now stands at %d strong!",
                 deletedTask, tasks.getTaskCount());
@@ -337,7 +342,7 @@ public class StackOverflown {
      * @throws StackOverflownException if parsing fails or invalid task number
      */
     private void handleMarkCommand(String input) throws StackOverflownException {
-        int taskIndex = Parser.parseTaskIndex(input, 4);
+        int taskIndex = Parser.parseTaskIndex(input, MARK_PARSE_VALUE);
         Task markedTask = tasks.markTask(taskIndex);
         ui.showTaskMarked(markedTask);
     }
@@ -349,7 +354,7 @@ public class StackOverflown {
      * @throws StackOverflownException if parsing fails or invalid task number
      */
     private void handleUnmarkCommand(String input) throws StackOverflownException {
-        int taskIndex = Parser.parseTaskIndex(input, 6);
+        int taskIndex = Parser.parseTaskIndex(input, UNMARK_PARSE_VALUE);
         Task unmarkedTask = tasks.unmarkTask(taskIndex);
         ui.showTaskUnmarked(unmarkedTask);
     }
@@ -361,7 +366,7 @@ public class StackOverflown {
      * @throws StackOverflownException if parsing fails or invalid task number
      */
     private void handleDeleteCommand(String input) throws StackOverflownException {
-        int taskIndex = Parser.parseTaskIndex(input, 6);
+        int taskIndex = Parser.parseTaskIndex(input, DELETE_PARSE_VALUE);
         Task deletedTask = tasks.deleteTask(taskIndex);
         ui.showTaskDeleted(deletedTask, tasks.getTaskCount());
     }

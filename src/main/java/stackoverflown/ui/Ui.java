@@ -65,7 +65,8 @@ public class Ui {
      */
     public void showWelcome() {
         String botName = "StackOverflown";
-        String introLine = String.format("Hey! %s here, thrilled to see you!\n Let's dive RIGHT in, what can I do for you? :)", botName);
+        String introLine = String.format("Hey! %s here, thrilled to see you!\n Let's dive RIGHT in, " +
+                "what can I do for you? :)", botName);
         String decoratedIntro = String.format("%s\n %s\n%s", LINE_SEPARATION, introLine, LINE_SEPARATION);
         System.out.println(decoratedIntro);
     }
@@ -136,7 +137,8 @@ public class Ui {
      * @param taskCount the number of tasks remaining after deletion
      */
     public void showTaskDeleted(Task task, int taskCount) {
-        String deleteMessage = String.format("%s\n Poof! Task vanished from existence:\n   %s\n Your task arsenal now stands at %d strong!\n%s",
+        String deleteMessage = String.format("%s\n Poof! Task vanished from existence:\n   %s\n Your " +
+                        "task arsenal now stands at %d strong!\n%s",
                 LINE_SEPARATION, task, taskCount, LINE_SEPARATION);
         System.out.println(deleteMessage);
     }
@@ -164,7 +166,8 @@ public class Ui {
      * @param task the Task object that was unmarked
      */
     public void showTaskUnmarked(Task task) {
-        String unmarkMessage = String.format("%s\n Aha! This task is no longer done - it's waiting for your magic touch again\n   %s\n%s",
+        String unmarkMessage = String.format("%s\n Aha! This task is no longer done - it's waiting " +
+                        "for your magic touch again\n   %s\n%s",
                 LINE_SEPARATION, task, LINE_SEPARATION);
         System.out.println(unmarkMessage);
     }
