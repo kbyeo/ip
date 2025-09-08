@@ -84,6 +84,7 @@ public class Parser {
      * @throws EmptyDescriptionException if the description is empty or only whitespace
      */
     public static String parseTodoCommand(String input) throws StackOverflownException {
+        assert input != null : "Input should not be null";
         if (input.trim().equals("todo")) {
             throw new EmptyDescriptionException("todo");
         }
@@ -154,6 +155,8 @@ public class Parser {
      * @throws InvalidTaskNumberException if the index is not a valid number
      */
     public static int parseTaskIndex(String input, int commandLength) throws InvalidTaskNumberException {
+        assert input != null : "Input should not be null";
+        assert commandLength > 0 : "Prefix length should be positive";
         try {
             String indexStr = input.substring(commandLength + 1).trim();
             int taskIndex = Integer.parseInt(indexStr) - 1; // Convert to 0-based
