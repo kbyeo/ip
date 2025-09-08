@@ -129,6 +129,7 @@ public class TaskList {
             throw new InvalidTaskNumberException();
         }
         Task removedTask = tasks.remove(index);
+        assert removedTask != null : "Removed task should not be null";
         autoSave();
         return removedTask; // Return the deleted task for UI display
     }
@@ -145,6 +146,7 @@ public class TaskList {
             throw new InvalidTaskNumberException();
         }
         tasks.get(index).markDone();
+        assert tasks.get(index).isDone() : "Task should be marked as done after markAsDone() call";
         autoSave();
         return tasks.get(index); // Return the marked task for UI display
     }
