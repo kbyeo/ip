@@ -39,6 +39,10 @@ public class Parser {
         TODO, DEADLINE, EVENT, LIST, MARK, UNMARK, DELETE, BYE, FIND, UNKNOWN
     }
 
+    static final int TODO_PARSE_VALUE = 5;
+    static final int DEADLINE_PARSE_VALUE = 9;
+    static final int EVENT_PARSE_VALUE = 6;
+
     /**
      * Determines the command type from user input.
      *
@@ -88,7 +92,7 @@ public class Parser {
         if (input.trim().equals("todo")) {
             throw new EmptyDescriptionException("todo");
         }
-        return input.substring(5).trim();
+        return input.substring(TODO_PARSE_VALUE).trim();
     }
 
     /**
@@ -106,7 +110,7 @@ public class Parser {
             throw new EmptyDescriptionException("deadline");
         }
 
-        String content = input.substring(9).trim();
+        String content = input.substring(DEADLINE_PARSE_VALUE).trim();
         String[] parts = content.split(" /by ");
         if (parts.length != 2) {
             throw new InvalidFormatException("deadline <DESCRIPTION> /by <DATE/TIME>");
@@ -130,7 +134,7 @@ public class Parser {
             throw new EmptyDescriptionException("event");
         }
 
-        String content = input.substring(6).trim();
+        String content = input.substring(EVENT_PARSE_VALUE).trim();
         String[] parts = content.split(" /from ");
         if (parts.length != 2) {
             throw new InvalidFormatException("event <DESCRIPTION> /from <START> /to <END>");
