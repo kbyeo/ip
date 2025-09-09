@@ -220,4 +220,13 @@ public class Ui {
         }
     }
 
+    /**
+     * Shows a general message to the user.
+     *
+     * @param message the message to display
+     */
+    public void showMessage(String message) {
+        String m = String.format("%s\n%s\n%s", LINE_SEPARATION, message, LINE_SEPARATION);
+    }
+
 }
