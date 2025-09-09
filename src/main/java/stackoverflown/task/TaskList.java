@@ -1,10 +1,16 @@
 package stackoverflown.task;
 
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Collections;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import stackoverflown.storage.Storage;
 import stackoverflown.exception.StackOverflownException;
 import stackoverflown.exception.EmptyDescriptionException;
 import stackoverflown.exception.InvalidTaskNumberException;
+
 
 /**
  * Manages a collection of tasks with CRUD operations and persistence support.
@@ -27,6 +33,46 @@ import stackoverflown.exception.InvalidTaskNumberException;
  * @since 2025
  */
 public class TaskList {
+
+    public enum SortType {
+        CREATION("creation", "Sort by creation order"),
+        TYPE("type", "Sort by task type (Todo, Deadline, Event)"),
+        STATUS("status", "Sort by completion status (pending first)"),
+        DEADLINE("deadline", "Sort by deadline date (chronologically)"),
+        ALPHABETICAL("alpha", "Sort alphabetically by description");
+
+        private final String keyword;
+        private final String description;
+
+        SortType(String keyword, String description) {
+            this.keyword = keyword;
+            this.description = description;
+        }
+
+        public String getKeyword() {
+            return keyword;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        /**
+         * Finds SortType by keyword.
+         *
+         * @param keyword the sort keyword
+         * @return matching SortType or null if not found
+         */
+        public static SortType fromKeyword(String keyword) {
+            for (SortType type : values()) {
+                if (type.keyword.equalsIgnoreCase(keyword)) {
+                    return type;
+                }
+            }
+            return null;
+        }
+    }
+
     private ArrayList<Task> tasks;
     private Storage storage;
 
@@ -233,6 +279,163 @@ public class TaskList {
 
         return matchingTasks;
     }
+
+    /**
+     * Sorts the task list according to the specified criteria.
+     *
+     * @param sortType the sorting criteria to apply
+     * @throws IllegalArgumentException if sortType is null
+     */
+    public void sortTasks(SortType sortType) {
+        if (sortType == null) {
+            throw new IllegalArgumentException("Sort type cannot be null");
+        }
+
+        Comparator<Task> comparator = createComparator(sortType);
+        Collections.sort(tasks, comparator);
+        autoSave();
+    }
+
+    /**
+     * Creates appropriate comparator for the given sort type.
+     *
+     * @param sortType the sorting criteria
+     * @return comparator for sorting tasks
+     */
+    private Comparator<Task> createComparator(SortType sortType) {
+        switch (sortType) {
+            case CREATION:
+                return Comparator.comparingInt(this::getTaskCreationOrder);
+            case TYPE:
+                return Comparator.comparingInt(this::getTaskTypeOrder);
+            case STATUS:
+                return createStatusComparator();
+            case DEADLINE:
+                return createDeadlineComparator();
+            case ALPHABETICAL:
+                return Comparator.comparing(task -> task.toString().toLowerCase());
+            default:
+                return Comparator.comparingInt(this::getTaskCreationOrder);
+        }
+    }
+
+    /**
+     * Gets the creation order of a task (index in original list).
+     * For creation sort, we maintain original order by using current index.
+     */
+    private int getTaskCreationOrder(Task task) {
+        return tasks.indexOf(task);
+    }
+    /**
+     * Gets the type priority for sorting (Todo=0, Deadline=1, Event=2).
+     */
+    private int getTaskTypeOrder(Task task) {
+        if (task instanceof ToDo) {
+            return 0;
+        } else if (task instanceof Deadline) {
+            return 1;
+        } else if (task instanceof Event) {
+            return 2;
+        }
+        return 3; // Unknown types go last
+    }
+
+    /**
+     * Creates comparator for status-based sorting (pending first, then completed).
+     */
+    private Comparator<Task> createStatusComparator() {
+        return (task1, task2) -> {
+            boolean task1Done = task1.isDone();
+            boolean task2Done = task2.isDone();
+
+            if (task1Done == task2Done) {
+                // If same status, sort by creation order
+                return Integer.compare(getTaskCreationOrder(task1), getTaskCreationOrder(task2));
+            }
+
+            // Pending tasks (false) come first, completed tasks (true) come last
+            return Boolean.compare(task1Done, task2Done);
+        };
+    }
+
+    /**
+     * Creates comparator for deadline-based sorting.
+     * Deadlines are sorted chronologically, other tasks go to end.
+     */
+    private Comparator<Task> createDeadlineComparator() {
+        return (task1, task2) -> {
+            LocalDate date1 = extractDeadlineDate(task1);
+            LocalDate date2 = extractDeadlineDate(task2);
+
+            // Both are deadlines
+            if (date1 != null && date2 != null) {
+                return date1.compareTo(date2);
+            }
+
+            // Only task1 is deadline - comes first
+            if (date1 != null && date2 == null) {
+                return -1;
+            }
+
+            // Only task2 is deadline - comes first
+            if (date1 == null && date2 != null) {
+                return 1;
+            }
+
+            // Neither is deadline - sort by creation order
+            return Integer.compare(getTaskCreationOrder(task1), getTaskCreationOrder(task2));
+        };
+    }
+
+    /**
+     * Extracts deadline date from a task if it's a Deadline task.
+     *
+     * @param task the task to check
+     * @return LocalDate if task is Deadline, null otherwise
+     */
+    private LocalDate extractDeadlineDate(Task task) {
+        if (!(task instanceof Deadline)) {
+            return null;
+        }
+
+        try {
+            // Extract date from Deadline toString format
+            String taskStr = task.toString();
+            int byIndex = taskStr.indexOf("(by: ");
+            if (byIndex == -1) {
+                return null;
+            }
+
+            int dateStart = byIndex + 5; // length of "(by: "
+            int dateEnd = taskStr.indexOf(")", dateStart);
+            if (dateEnd == -1) {
+                return null;
+            }
+
+            String dateStr = taskStr.substring(dateStart, dateEnd);
+            return LocalDate.parse(dateStr, DateTimeFormatter.ofPattern("MMM dd yyyy"));
+        } catch (Exception e) {
+            return null; // If parsing fails, treat as non-deadline
+        }
+    }
+
+    /**
+     * Gets available sort options as formatted string.
+     *
+     * @return formatted string describing all sort options
+     */
+    public static String getSortOptionsDescription() {
+        StringBuilder options = new StringBuilder("Available sort options:\n");
+
+        for (SortType sortType : SortType.values()) {
+            options.append(String.format("- %s - %s\n",
+                    sortType.getKeyword(), sortType.getDescription()));
+        }
+
+        options.append("\nUsage: sort [option] (e.g., 'sort deadline', 'sort status')");
+        return options.toString();
+    }
+
 
     /**
      * Returns a formatted string representation of all tasks.

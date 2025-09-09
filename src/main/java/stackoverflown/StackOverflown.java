@@ -101,6 +101,8 @@ public class StackOverflown {
                     return handleDeleteResponse(input);
                 case FIND:
                     return handleFindResponse(input);
+                case SORT:
+                    return handleSortResponse(input);
                 default:
                     throw new InvalidCommandException(input);
             }
@@ -232,6 +234,23 @@ public class StackOverflown {
         return result.toString().trim();
     }
 
+    /**
+     * Handles sort command for GUI and returns response string.
+     *
+     * @param input user input string containing sort command
+     * @return success message with sorting details
+     * @throws StackOverflownException if parsing or sorting fails
+     */
+    private String handleSortResponse(String input) throws StackOverflownException {
+        TaskList.SortType sortType = Parser.parseSortCommand(input);
+        tasks.sortTasks(sortType);
+
+        String sortedListResponse = getTaskListResponse();
+
+        return String.format("Tasks sorted by %s!\n\n%s",
+                sortType.getDescription().toLowerCase(), sortedListResponse);
+    }
+
 
 
     // ===== CLI INTERFACE METHODS =====
@@ -285,6 +304,9 @@ public class StackOverflown {
                     break;
                 case FIND:
                     handleFindCommand(input);
+                    break;
+                case SORT:
+                    handleSortCommand(input);
                     break;
                 default:
                     throw new InvalidCommandException(input);
@@ -381,6 +403,19 @@ public class StackOverflown {
         String keyword = Parser.parseFindCommand(input);
         ArrayList<Task> foundTasks = tasks.findTasks(keyword);
         ui.showFindResults(foundTasks, keyword);
+    }
+
+    /**
+     * Handles sort command for CLI interface.
+     *
+     * @param input user input string containing sort command
+     * @throws StackOverflownException if parsing or sorting fails
+     */
+    private void handleSortCommand(String input) throws StackOverflownException {
+        TaskList.SortType sortType = Parser.parseSortCommand(input);
+        tasks.sortTasks(sortType);
+        ui.showTaskList(tasks);
+        ui.showMessage("Tasks sorted by " + sortType.getDescription().toLowerCase() + "!");
     }
 
     /**

@@ -4,6 +4,8 @@ import stackoverflown.exception.StackOverflownException;
 import stackoverflown.exception.EmptyDescriptionException;
 import stackoverflown.exception.InvalidFormatException;
 import stackoverflown.exception.InvalidTaskNumberException;
+import stackoverflown.exception.InvalidSortTypeException;
+import stackoverflown.task.TaskList;
 
 /**
  * Utility class for parsing user input commands and extracting relevant information.
@@ -36,7 +38,7 @@ public class Parser {
      * <p>UNKNOWN represents any unrecognized command input.</p>
      */
     public enum CommandType {
-        TODO, DEADLINE, EVENT, LIST, MARK, UNMARK, DELETE, BYE, FIND, UNKNOWN
+        TODO, DEADLINE, EVENT, LIST, MARK, UNMARK, DELETE, BYE, FIND, UNKNOWN, SORT
     }
 
     static final int TODO_PARSE_VALUE = 5;
@@ -73,6 +75,8 @@ public class Parser {
             return CommandType.DELETE;
         } else if (command.startsWith("find ")) {
             return CommandType.FIND;
+        } else if (command.startsWith("sort")) {
+            return CommandType.SORT;
         } else {
             return CommandType.UNKNOWN;
         }
@@ -184,5 +188,32 @@ public class Parser {
             throw new EmptyDescriptionException("find keyword");
         }
         return input.substring(5).trim();
+    }
+
+    /**
+     * Parses sort command to extract sort type.
+     *
+     * @param input the full user input (e.g., "sort deadline")
+     * @return the SortType to apply
+     * @throws StackOverflownException if sort type is invalid or missing
+     */
+    public static TaskList.SortType parseSortCommand(String input) throws StackOverflownException {
+        String[] parts = input.trim().split("\\s+", 2);
+
+        if (parts.length == 1) {
+            // Just "sort" with no parameters - show help
+            throw new InvalidSortTypeException("Please specify a sort type. " +
+                    TaskList.getSortOptionsDescription());
+        }
+
+        String sortKeyword = parts[1].toLowerCase().trim();
+        TaskList.SortType sortType = TaskList.SortType.fromKeyword(sortKeyword);
+
+        if (sortType == null) {
+            throw new InvalidSortTypeException("Invalid sort type: '" + sortKeyword + "'. " +
+                    TaskList.getSortOptionsDescription());
+        }
+
+        return sortType;
     }
 }
