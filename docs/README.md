@@ -199,6 +199,29 @@ Here are your tasks:
 - `[X]` = Completed task
 - `[ ]` = Pending task
 
+#### Finding Tasks
+
+Search for tasks containing specific keywords (case-insensitive).
+
+**Format:** `find KEYWORD`
+
+**Example:**
+
+```
+
+find assignment
+
+```
+
+**Expected output:**
+
+```
+
+Here are the matching tasks in your list:
+
+1. [D][]submit assignment (by: Dec 01 2025 11:59pm)
+
+```
 ---
 
 ### Organising Tasks
@@ -252,6 +275,7 @@ Close the application and save all your data automatically.
 | **Add Deadline** | `deadline DESCRIPTION /by YYYY-MM-DD HHMM`        | `deadline assignment /by 2025-12-01`                      |
 | **Add Event** | `event DESCRIPTION /from DATE TIME /to DATE TIME` | `event meeting /from 2025-12-10 1400 /to 2025-12-10 1600` |
 | **List Tasks** | `list`                                            | `list`                                                    |
+| **Find Tasks** | `find KEYWORD`                                    | `find assignment`                                         |
 | **Mark Done** | `mark INDEX`                                      | `mark 1`                                                  |
 | **Mark Undone** | `unmark INDEX`                                    | `unmark 1`                                                |
 | **Delete Task** | `delete INDEX`                                    | `delete 2`                                                |

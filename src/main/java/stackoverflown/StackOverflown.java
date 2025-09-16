@@ -140,7 +140,8 @@ public class StackOverflown {
         String description = Parser.parseTodoCommand(input);
         tasks.addToDo(description);
         Task newTask = tasks.getTask(tasks.getTaskCount() - 1);
-        return String.format("Boom! A ToDo task just joined the party:\n%s\n\nYour task arsenal now stands at %d strong!",
+        return String.format("Boom! A ToDo task just joined the party:\n%s\n\nYour task " +
+                        "arsenal now stands at %d strong!",
                 newTask, tasks.getTaskCount());
     }
 
@@ -155,7 +156,8 @@ public class StackOverflown {
         String[] parts = Parser.parseDeadlineCommand(input);
         tasks.addDeadline(parts[0], parts[1]);
         Task newTask = tasks.getTask(tasks.getTaskCount() - 1);
-        return String.format("All set! A Deadline task just joined the party:\n%s\n\nYour task arsenal now stands at %d strong!",
+        return String.format("All set! A Deadline task just joined the party:\n%s\n\nYour task arsenal " +
+                        "now stands at %d strong!",
                 newTask, tasks.getTaskCount());
     }
 
@@ -170,7 +172,8 @@ public class StackOverflown {
         String[] parts = Parser.parseEventCommand(input);
         tasks.addEvent(parts[0], parts[1], parts[2]);
         Task newTask = tasks.getTask(tasks.getTaskCount() - 1);
-        return String.format("Tada! An Event task just joined the party:\n%s\n\nYour task arsenal now stands at %d strong!",
+        return String.format("Tada! An Event task just joined the party:\n%s\n\nYour task arsenal now " +
+                        "stands at %d strong!",
                 newTask, tasks.getTaskCount());
     }
     /**
@@ -196,7 +199,8 @@ public class StackOverflown {
     private String handleUnmarkResponse(String input) throws StackOverflownException {
         int taskIndex = Parser.parseTaskIndex(input, UNMARK_PARSE_VALUE);
         Task unmarkedTask = tasks.unmarkTask(taskIndex);
-        return String.format("Aha! This task is no longer done - it's waiting for your magic touch again:\n%s", unmarkedTask);
+        return String.format("Aha! This task is no longer done - it's waiting for your " +
+                "magic touch again:\n%s", unmarkedTask);
     }
     /**
      * Handles delete command for GUI and returns response string.
@@ -208,7 +212,8 @@ public class StackOverflown {
     private String handleDeleteResponse(String input) throws StackOverflownException {
         int taskIndex = Parser.parseTaskIndex(input, DELETE_PARSE_VALUE);
         Task deletedTask = tasks.deleteTask(taskIndex);
-        return String.format("Poof! Task vanished from existence:\n%s\n\nYour task arsenal now stands at %d strong!",
+        return String.format("Poof! Task vanished from existence:\n%s\n\nYour task arsenal " +
+                        "now stands at %d strong!",
                 deletedTask, tasks.getTaskCount());
     }
 

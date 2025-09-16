@@ -67,13 +67,13 @@ public class Parser {
             return CommandType.DEADLINE;
         } else if (command.startsWith("event")) {
             return CommandType.EVENT;
-        } else if (command.startsWith("mark ")) {
+        } else if (command.startsWith("mark")) {
             return CommandType.MARK;
-        } else if (command.startsWith("unmark ")) {
+        } else if (command.startsWith("unmark")) {
             return CommandType.UNMARK;
-        } else if (command.startsWith("delete ")) {
+        } else if (command.startsWith("delete")) {
             return CommandType.DELETE;
-        } else if (command.startsWith("find ")) {
+        } else if (command.startsWith("find")) {
             return CommandType.FIND;
         } else if (command.startsWith("sort")) {
             return CommandType.SORT;

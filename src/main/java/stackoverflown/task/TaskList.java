@@ -127,7 +127,8 @@ public class TaskList {
      * @throws EmptyDescriptionException if description or date is empty
      * @throws StackOverflownException if date parsing fails
      */
-    public void addDeadline(String description, String byDate) throws EmptyDescriptionException, StackOverflownException {
+    public void addDeadline(String description, String byDate) throws EmptyDescriptionException,
+            StackOverflownException {
         if (description.trim().isEmpty()) {
             throw new EmptyDescriptionException("deadline");
         }
@@ -148,7 +149,8 @@ public class TaskList {
      * @throws EmptyDescriptionException if any parameter is empty
      * @throws StackOverflownException if date parsing fails
      */
-    public void addEvent(String description, String from, String to) throws EmptyDescriptionException, StackOverflownException {
+    public void addEvent(String description, String from, String to) throws EmptyDescriptionException,
+            StackOverflownException {
         if (description.trim().isEmpty()) {
             throw new EmptyDescriptionException("event");
         }
