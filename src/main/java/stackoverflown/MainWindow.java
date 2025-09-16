@@ -8,17 +8,25 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
+import javafx.animation.FadeTransition;
+import javafx.scene.Node;
+import javafx.util.Duration;
 
 /**
- * Controller for the main GUI window of StackOverflown.
+ * Enhanced controller for the main GUI window with modern UX features.
  *
- * <p>This class handles the interaction between the user interface components
- * and the core StackOverflown business logic. It manages user input processing,
- * display of chat messages, and application lifecycle events with proper
- * message display and circular avatars.</p>
+ * <p>Features polished user experience improvements including:
+ * <ul>
+ * <li>Smooth message animations for better visual feedback</li>
+ * <li>Enhanced keyboard interaction and focus management</li>
+ * <li>Optimized scrolling behavior for better chat experience</li>
+ * <li>Visual feedback for user interactions</li>
+ * <li>Responsive design adaptations</li>
+ * </ul>
+ * </p>
  *
  * @author Yeo Kai Bin
- * @version 1.0
+ * @version 2.0
  * @since 2025
  */
 public class MainWindow extends AnchorPane {
@@ -32,16 +40,13 @@ public class MainWindow extends AnchorPane {
     private Button sendButton;
 
     private StackOverflown stackOverflown;
-
-    // Handle missing images gracefully
     private Image userImage;
     private Image stackOverflownImage;
 
     /**
-     * Constructor that initializes images with fallback handling.
+     * Constructor with enhanced image loading and fallback handling.
      */
     public MainWindow() {
-        // Try to load images, use null if not found (will be handled in DialogBox)
         try {
             userImage = new Image(this.getClass().getResourceAsStream("/images/ipUserAvatar.png"));
         } catch (Exception e) {
@@ -56,84 +61,185 @@ public class MainWindow extends AnchorPane {
     }
 
     /**
-     * Initializes the MainWindow controller.
-     *
-     * <p>Sets up the scroll pane for proper auto-scrolling behavior that ensures
-     * new messages are always visible and long messages are fully displayed.</p>
+     * Initialize with enhanced UX features and visual improvements.
      */
     @FXML
     public void initialize() {
-        // Set up dialog container for proper content sizing
-        dialogContainer.prefWidthProperty().bind(scrollPane.widthProperty().subtract(2));
+        setupScrollPane();
+        setupInputField();
+        setupSendButton();
+    }
 
-        // Add listener to auto-scroll when content height changes
-        dialogContainer.heightProperty().addListener((observable, oldValue, newValue) -> {
-            Platform.runLater(() -> scrollPane.setVvalue(1.0));
+    /**
+     * Configure scroll pane for optimal chat experience.
+     */
+    private void setupScrollPane() {
+        dialogContainer.prefWidthProperty().bind(scrollPane.widthProperty().subtract(10));
+
+        // Smooth auto-scrolling with proper timing
+        dialogContainer.heightProperty().addListener((observable, oldValue,
+                                                      newValue) -> {
+            Platform.runLater(() -> {
+                Platform.runLater(() -> scrollPane.setVvalue(1.0));
+            });
+        });
+
+        // Optimize scroll pane appearance
+        scrollPane.setStyle("-fx-background: #FFFFFF; -fx-background-color: #FFFFFF;");
+        scrollPane.setFitToWidth(true);
+    }
+
+    /**
+     * Configure input field with enhanced UX features.
+     */
+    private void setupInputField() {
+        // Focus management for better keyboard interaction
+        userInput.focusedProperty().addListener((obs, wasFocused,
+                                                 isNowFocused) -> {
+            if (isNowFocused) {
+                userInput.setStyle(userInput.getStyle() +
+                        "-fx-border-color: #0084FF; -fx-border-width: 2px;");
+            } else {
+                userInput.setStyle(userInput.getStyle().replace(
+                        "-fx-border-color: #0084FF; -fx-border-width: 2px;", ""));
+            }
+        });
+
+        // Auto-focus on application start
+        Platform.runLater(() -> userInput.requestFocus());
+    }
+
+    /**
+     * Configure send button with visual feedback.
+     */
+    private void setupSendButton() {
+        // Hover effects for better interaction feedback
+        sendButton.setOnMouseEntered(e -> {
+            sendButton.setStyle(sendButton.getStyle() + "-fx-background-color: #0066CC;");
+        });
+
+        sendButton.setOnMouseExited(e -> {
+            sendButton.setStyle(sendButton.getStyle().replace(
+                    "-fx-background-color: #0066CC;", "-fx-background-color: #0084FF;"));
+        });
+
+        // Press effect
+        sendButton.setOnMousePressed(e -> {
+            sendButton.setScaleX(0.95);
+            sendButton.setScaleY(0.95);
+        });
+
+        sendButton.setOnMouseReleased(e -> {
+            sendButton.setScaleX(1.0);
+            sendButton.setScaleY(1.0);
         });
     }
 
     /**
-     * Injects the StackOverflown instance and displays welcome message.
-     *
-     * @param s the StackOverflown instance to use for processing commands
+     * Inject StackOverflown instance with enhanced welcome experience.
      */
     public void setStackOverflown(StackOverflown s) {
         stackOverflown = s;
 
-        // Display welcome message
+        // Add welcome message with smooth animation
         String welcomeMessage = stackOverflown.getWelcomeMessage();
-        addBotMessage(welcomeMessage);
+        addBotMessageWithAnimation(welcomeMessage);
     }
 
     /**
-     * Adds a bot message to the dialog container.
-     *
-     * @param message the message text to display
+     * Add bot message with smooth fade-in animation.
+     */
+    private void addBotMessageWithAnimation(String message) {
+        DialogBox botDialog = DialogBox.getStackOverflownDialog(message, stackOverflownImage);
+        addMessageWithAnimation(botDialog);
+    }
+
+    /**
+     * Add user message with smooth fade-in animation.
+     */
+    private void addUserMessageWithAnimation(String message) {
+        DialogBox userDialog = DialogBox.getUserDialog(message, userImage);
+        addMessageWithAnimation(userDialog);
+    }
+
+    /**
+     * Add any dialog with smooth animation for better UX.
+     */
+    private void addMessageWithAnimation(DialogBox dialog) {
+        // Start invisible for fade-in effect
+        dialog.setOpacity(0.0);
+        dialogContainer.getChildren().add(dialog);
+
+        // Create smooth fade-in animation
+        FadeTransition fadeIn = new FadeTransition(Duration.millis(300), dialog);
+        fadeIn.setFromValue(0.0);
+        fadeIn.setToValue(1.0);
+        fadeIn.play();
+    }
+
+    /**
+     * Legacy add methods for backward compatibility.
      */
     private void addBotMessage(String message) {
-        DialogBox botDialog = DialogBox.getStackOverflownDialog(message, stackOverflownImage);
-        dialogContainer.getChildren().add(botDialog);
+        addBotMessageWithAnimation(message);
     }
 
-    /**
-     * Adds a user message to the dialog container.
-     *
-     * @param message the message text to display
-     */
     private void addUserMessage(String message) {
-        DialogBox userDialog = DialogBox.getUserDialog(message, userImage);
-        dialogContainer.getChildren().add(userDialog);
+        addUserMessageWithAnimation(message);
     }
 
     /**
-     * Handles user input when Send button is clicked or Enter is pressed.
-     *
-     * <p>Processes the user command through StackOverflown, displays both the
-     * user input and bot response as dialog boxes with proper scrolling,
-     * and handles application exit if the bye command is used.</p>
+     * Enhanced input handling with improved UX and visual feedback.
      */
     @FXML
     private void handleUserInput() {
-        String input = userInput.getText();
-        if (input.trim().isEmpty()) {
+        String input = userInput.getText().trim();
+        if (input.isEmpty()) {
+            // Visual feedback for empty input
+            userInput.setStyle(userInput.getStyle() +
+                    "-fx-border-color: #EA4335; -fx-border-width: 2px;");
+
+            // Reset border color after brief delay
+            Platform.runLater(() -> {
+                try {
+                    Thread.sleep(1000);
+                    Platform.runLater(() -> {
+                        userInput.setStyle(userInput.getStyle().replace(
+                                "-fx-border-color: #EA4335; -fx-border-width: 2px;", ""));
+                    });
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+            });
             return;
         }
 
-        // Clear input field immediately for better UX
+        // Clear input immediately and maintain focus
         userInput.clear();
+        userInput.requestFocus();
 
-        // Add user message
+        // Add user message with animation
         addUserMessage(input);
 
-        // Get and add bot response
-        String response = stackOverflown.getResponse(input);
-        addBotMessage(response);
+        // Get and add bot response with slight delay for natural feel
+        Platform.runLater(() -> {
+            String response = stackOverflown.getResponse(input);
 
-        // Handle application exit
-        if (input.trim().toLowerCase().equals("bye")) {
+            // Small delay makes conversation feel more natural
+            try {
+                Thread.sleep(200);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+
+            Platform.runLater(() -> addBotMessage(response));
+        });
+
+        // Handle application exit with enhanced transition
+        if (input.toLowerCase().equals("bye")) {
             Platform.runLater(() -> {
                 try {
-                    Thread.sleep(1500); // Brief delay to show goodbye message
+                    Thread.sleep(2000); // Longer delay to show goodbye message
                     Platform.exit();
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();

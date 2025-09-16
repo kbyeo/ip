@@ -5,12 +5,23 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.HBox?>
 
-<fx:root alignment="TOP_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefWidth="400.0" type="javafx.scene.layout.HBox" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1">
+<fx:root alignment="TOP_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefWidth="400.0"
+         spacing="8.0" type="javafx.scene.layout.HBox" xmlns="http://javafx.com/javafx/17.0.2-ea"
+         xmlns:fx="http://javafx.com/fxml/1">
     <children>
-        <Label fx:id="dialog" text="Label" wrapText="true" maxWidth="300.0" minHeight="-Infinity" prefHeight="-1.0" />
-        <ImageView fx:id="displayPicture" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="false" />
+        <Label fx:id="dialog" alignment="TOP_LEFT" maxWidth="280.0" minHeight="-Infinity"
+               prefHeight="-1.0" text="Label" wrapText="true">
+            <padding>
+                <Insets bottom="10.0" left="12.0" right="12.0" top="10.0" />
+            </padding>
+        </Label>
+        <ImageView fx:id="displayPicture" fitHeight="35.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="false">
+            <HBox.margin>
+                <Insets top="2.0" />
+            </HBox.margin>
+        </ImageView>
     </children>
     <padding>
-        <Insets bottom="15.0" left="5.0" right="5.0" top="15.0" />
+        <Insets bottom="4.0" left="8.0" right="8.0" top="4.0" />
     </padding>
 </fx:root>
